@@ -28,33 +28,31 @@ void Drawable::deleteVertices(){
 	}
 }
 
-std::vector< glm::vec3* >* Drawable::loadFromFile( const char *path, char type ){
+Drawable& Drawable::setVertices(const char *path){	
 	std::ifstream file(path, std::ios::in);
 	if( !file.is_open() ){
 		Exception ex( "Nie udało się otworzyć pliku z modelem" );
 		throw ex;
 	}
+
+	this->deleteVertices();
+	this->deleteIndices();
 	
-	std::vector< glm::vec3* >* data = new std::vector< glm::vec3* >();
+	this->vertices = new std::vector< glm::vec3* >();
+	this->indices = new std::vector< unsigned short >();
 	
 	while( file.good() ){
 		std::string buf = "";
 		getline( file, buf );
-		if( buf[0] != type ){
+		if( buf[0] == 'v' ){
+			vertices->push_back( this->strToVec3( buf ) );
 			continue;
 		}
-
-		data->push_back( this->getVec3( buf, type ) );
+		if( buf[0] == 'f' ){
+			this->addIndicesFromString( buf, indices );
+		}
 	}
-	
 	file.close();
-	
-	return data;
-}
-
-Drawable& Drawable::setVertices(const char *path){
-	this->deleteVertices();
-	this->vertices = this->loadFromFile( path, 'v' );
 	
 	return *(this);
 }
@@ -63,7 +61,7 @@ const std::vector< glm::vec3* >* Drawable::getVertices(){
 	return this->vertices;	
 }
 
-glm::vec3* Drawable::getVec3( std::string line, char type ){
+glm::vec3* Drawable::strToVec3( std::string line ){
 	unsigned short int count = -1;
 	bool reading = false;
 	float tmp[3];
@@ -72,7 +70,7 @@ glm::vec3* Drawable::getVec3( std::string line, char type ){
 		line += '\n';
 	}
 	for( unsigned int i=0; i < line.length(); i++ ){
-		if( line[i] == type || line[i] == ' ' || line[i] == '\n' ){
+		if( ((int)line[i] < 48 || (int)line[i] > 57) && line[i] != '.' && line[i] != '-' ){
 			if( reading ){
 				count++;
 				tmp[count] = ::atof( buf.c_str() );
@@ -90,4 +88,28 @@ glm::vec3* Drawable::getVec3( std::string line, char type ){
 	}
 		
 	return new glm::vec3(tmp[0], tmp[1], tmp[2]);
+}
+
+void Drawable::addIndicesFromString( std::string src, std::vector< unsigned short >* dst ){
+	bool reading = false;
+	std::string buf = "";
+	if ( src[src.length()-1] != '\n' ){
+		src += '\n';
+	}
+	for( unsigned int i=0; i < src.length(); i++ ){
+		if( (int)src[i] < 48 || (int)src[i] > 57 ){
+			if( reading ){
+				dst->push_back( ::atoi( buf.c_str() ) );
+				buf = "";
+				reading = false;				
+			}
+			continue;
+		}
+		reading = true;
+		buf += src[i];
+	}
+}
+
+const std::vector< unsigned short >* Drawable::getIndices(){
+	return this->indices;
 }

@@ -12,12 +12,14 @@ class Drawable{
 	private:
 		void deleteVertices();
 		void deleteIndices();
-		glm::vec3* getVec3( std::string line, char type );
-		std::vector< glm::vec3* >* loadFromFile( const char *path, char type );
-
+		
 	protected: 
+		glm::vec3* strToVec3( std::string line );
+		void addIndicesFromString( std::string src, std::vector< unsigned short >* dst );
+		
 		std::vector< glm::vec3* > *vertices;
-		std::vector< unsigned int > *indices;
+		std::vector< unsigned short > *indices;
+		
 	
 	public:
 		Drawable();
@@ -25,6 +27,7 @@ class Drawable{
 		
 		Drawable& setVertices(const char *path);
 		const std::vector< glm::vec3* >* getVertices();
+		const std::vector< unsigned short >* getIndices();
 };
 
 #endif
