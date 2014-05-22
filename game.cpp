@@ -25,17 +25,6 @@ int main(void)
 	
 	}
 	
-	Drawable d;
-	
-	d.setVertices( "models/cube.obj" );
-	const vector< glm::vec3* >* v = d.getVertices();
-	
-	for(unsigned int i=0; i<v->size(); i++){
-		cout << v->at(i)->x << ' ';
-		cout << v->at(i)->y << ' ';
-		cout << v->at(i)->z << endl;
-	}
-	
 	window = glfwCreateWindow(800, 600, "Arkanoid 3D", NULL, NULL);
 	if (!window){
 		glfwTerminate();

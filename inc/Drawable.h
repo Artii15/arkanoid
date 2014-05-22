@@ -11,10 +11,13 @@ class Drawable{
 	
 	private:
 		void deleteVertices();
-		glm::vec3* getVec3( std::string line );
+		void deleteIndices();
+		glm::vec3* getVec3( std::string line, char type );
+		std::vector< glm::vec3* >* loadFromFile( const char *path, char type );
 
 	protected: 
 		std::vector< glm::vec3* > *vertices;
+		std::vector< unsigned int > *indices;
 	
 	public:
 		Drawable();
