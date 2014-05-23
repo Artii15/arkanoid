@@ -34,13 +34,15 @@ class Drawable{
 		std::vector< unsigned int > *normal_indices;
 		std::vector< unsigned int > *vertex_indices;
 		std::vector< unsigned int > *texture_indices;
+		GLuint shader_program;
 		
 	
 	public:
 		Drawable();
 		~Drawable();
 		const std::vector< glm::vec4* >* getVertices();
-		Drawable& loadObj(const char *path);
+		Drawable& loadObj(const char *path); // Ładować tym wyłącznie modele zbudowane z trójkątów!
+		Drawable& loadShaders(const char * vertex_file_path,const char * fragment_file_path);
 };
 
 #endif

@@ -7,7 +7,7 @@
 using namespace std;
 
 void drawFrame(){
-	
+
 }
 
 static void error_callback(int error, const char* description){
@@ -34,12 +34,25 @@ int main(void)
 		glfwTerminate();
 		exit(EXIT_FAILURE);
 	}
-	
+		
 	glfwMakeContextCurrent(window);
 	glfwSetKeyCallback(window, key_callback);
 	
+	// Initialize GLEW
+	if (glewInit() != GLEW_OK) {
+		fprintf(stderr, "Failed to initialize GLEW\n");
+		return -1;
+	}
+		
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
+	// Cull triangles which normal is not towards the camera
+	glEnable(GL_CULL_FACE);
+		
+	Drawable *d = new Drawable();
+	d->loadShaders("shaders/vertex/bat.txt", "shaders/fragment/bat.txt");
+	delete d;
 	
 	while (!glfwWindowShouldClose(window)){
 		drawFrame();
