@@ -18,22 +18,25 @@ class Drawable{
 	
 	private:
 		void deleteVertices();
-		void deleteIndices();
 		void deleteTextureVertices();
 		void deleteVertexNormals();
+		void deleteVertexIndices();
+		void deleteTextureIndices();
+		void deleteNormalIndices();
 		
 	protected: 		
 		std::vector< glm::vec4* > *vertices;
-		std::vector< unsigned int > *indices;
 		std::vector< glm::vec2* > *texture_vertices;
 		std::vector< glm::vec4* > *vertex_normals;
+		std::vector< unsigned int > *vertex_indices;
+		std::vector< unsigned int > *texture_indices;
+		std::vector< unsigned int > *normal_indices;
 	
 	public:
 		Drawable();
 		~Drawable();
 		
 		const std::vector< glm::vec4* >* getVertices();
-		const std::vector< unsigned int >* getIndices();
 		Drawable& loadObj(const char *path);
 };
 
