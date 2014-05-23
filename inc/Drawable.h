@@ -23,6 +23,9 @@ class Drawable{
 		void deleteVertexIndices();
 		void deleteTextureIndices();
 		void deleteNormalIndices();
+		glm::vec4* strToVec4( std::string line );
+		glm::vec2* strToVec2( std::string line );
+		void fillIndices( std::string line, std::vector< unsigned int > *vi, std::vector< unsigned int > *ti, std::vector< unsigned int > *ni );
 		
 	protected: 		
 		std::vector< glm::vec4* > *vertices;

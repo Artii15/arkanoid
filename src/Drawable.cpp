@@ -98,24 +98,109 @@ Drawable& Drawable::loadObj(const char *path){
 		std::string buf = "";
 		getline(file, buf);
 		std::string prefix = buf.substr(0, 2);
-		if( prefix == "vn" ){
 		
+		if( prefix == "vn" ){
+			this->vertex_normals->push_back( this->strToVec4( buf ) );
 			continue;
 		}
 		if( prefix == "vt" ){
-		
+			this->texture_vertices->push_back( this->strToVec2( buf ) );
 			continue;
 		}
 		if( prefix == "v " ){
-		
+			this->vertices->push_back( this->strToVec4( buf ) );
 			continue;
 		}
 		if( prefix == "f " ){
-		
+			this->fillIndices(buf, this->vertex_indices, this->texture_indices, this->normal_indices); 
 			continue;
 		}
 	}
 	
 	file.close();
 	return *(this);
+}
+
+glm::vec4* Drawable::strToVec4( std::string line ){
+	float tmp[3];
+	
+	short count = 0;
+	bool reading = false;
+	std::string buf = "";
+	for(unsigned int i=0; i<line.length(); i++){
+		if( ((int)line[i] < 48 || (int)line[i] > 57) && line[i] != '.' && line[i] != '-' ){
+			if(reading){
+				reading = false;
+				tmp[count++] = ::atof( buf.c_str() );
+				buf = "";
+				if(count > 2){
+					break;
+				}
+			}
+			continue;
+		}
+		reading = true;
+		buf += line[i];
+	}
+	
+	return new glm::vec4(tmp[0], tmp[1], tmp[2], 1.0f);
+}
+
+glm::vec2* Drawable::strToVec2( std::string line ){
+	float tmp[2];
+	
+	short count = 0;
+	bool reading = false;
+	std::string buf = "";
+	line += "\n";
+	for(unsigned int i=0; i<line.length(); i++){
+		if( ((int)line[i] < 48 || (int)line[i] > 57) && line[i] != '.' && line[i] != '-' ){
+			if(reading){
+				reading = false;
+				tmp[count++] = ::atof( buf.c_str() );
+				buf = "";
+				if(count > 1){
+					break;
+				}
+			}
+			continue;
+		}
+		reading = true;
+		buf += line[i];
+	}
+	
+	return new glm::vec2(tmp[0], tmp[1]);
+}
+
+void Drawable::fillIndices( std::string line, std::vector< unsigned int > *vi, std::vector< unsigned int > *ti, std::vector< unsigned int > *ni ){
+	unsigned int i=0;
+	unsigned short nr = 0;
+	std::string buf = "";
+	line += "\n";
+	while( i < line.length() ){
+		if( ((int)line[i] < 49 || (int)line[i] > 57) ){
+			if( line[i] == '/' ){
+				if( nr == 0 ){
+					vi->push_back( ::atoi( buf.c_str() ) - 1 );
+					nr++;
+				}
+				else{
+					ni->push_back( ::atoi( buf.c_str() ) - 1 );
+					nr++;
+				}
+				buf = "";
+			}
+			else{
+				if( nr == 2 ){
+					ti->push_back( ::atoi( buf.c_str() ) - 1 );
+					nr = 0;
+					buf = "";
+				}
+			}
+		}
+		else{
+			buf += line[i];
+		}
+		i++;
+	}
 }
