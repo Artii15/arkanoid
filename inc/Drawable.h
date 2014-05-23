@@ -31,14 +31,14 @@ class Drawable{
 		std::vector< glm::vec4* > *vertices;
 		std::vector< glm::vec2* > *texture_vertices;
 		std::vector< glm::vec4* > *vertex_normals;
+		std::vector< unsigned int > *normal_indices;
 		std::vector< unsigned int > *vertex_indices;
 		std::vector< unsigned int > *texture_indices;
-		std::vector< unsigned int > *normal_indices;
+		
 	
 	public:
 		Drawable();
 		~Drawable();
-		
 		const std::vector< glm::vec4* >* getVertices();
 		Drawable& loadObj(const char *path);
 };

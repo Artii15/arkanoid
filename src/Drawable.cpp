@@ -93,7 +93,7 @@ Drawable& Drawable::loadObj(const char *path){
 	this->vertex_indices = new std::vector< unsigned int >();
 	this->texture_indices = new std::vector< unsigned int >();
 	this->normal_indices = new std::vector< unsigned int >();
-	
+	#include <iostream>
 	while( file.good() ){
 		std::string buf = "";
 		getline(file, buf);
@@ -127,6 +127,7 @@ glm::vec4* Drawable::strToVec4( std::string line ){
 	short count = 0;
 	bool reading = false;
 	std::string buf = "";
+	line += "\n";
 	for(unsigned int i=0; i<line.length(); i++){
 		if( ((int)line[i] < 48 || (int)line[i] > 57) && line[i] != '.' && line[i] != '-' ){
 			if(reading){
@@ -185,14 +186,14 @@ void Drawable::fillIndices( std::string line, std::vector< unsigned int > *vi, s
 					nr++;
 				}
 				else{
-					ni->push_back( ::atoi( buf.c_str() ) - 1 );
+					ti->push_back( ::atoi( buf.c_str() ) - 1 );
 					nr++;
 				}
 				buf = "";
 			}
 			else{
 				if( nr == 2 ){
-					ti->push_back( ::atoi( buf.c_str() ) - 1 );
+					ni->push_back( ::atoi( buf.c_str() ) - 1 );
 					nr = 0;
 					buf = "";
 				}
