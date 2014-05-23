@@ -1,11 +1,14 @@
-#include <GLFW/glfw3.h>
+#include "inc/Drawable.h"
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
 
-#include "inc/Drawable.h"
-
 using namespace std;
+
+void drawFrame(){
+	
+}
 
 static void error_callback(int error, const char* description){
 	fputs(description, stderr);
@@ -15,6 +18,7 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 		glfwSetWindowShouldClose(window, GL_TRUE);
 	}
 }
+
 int main(void)
 {
 	GLFWwindow* window;
@@ -33,7 +37,12 @@ int main(void)
 	
 	glfwMakeContextCurrent(window);
 	glfwSetKeyCallback(window, key_callback);
+	
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
+	
 	while (!glfwWindowShouldClose(window)){
+		drawFrame();
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
