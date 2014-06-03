@@ -54,8 +54,6 @@ int main(void)
 	d.loadShaders("shaders/vertex/bat.txt", "shaders/fragment/bat.txt");
 	GLuint p = d.getShaderProgram();
 	GLuint MatrixID = glGetUniformLocation(p, "MVP");
-	GLuint ViewMatrixID = glGetUniformLocation(p, "V");
-	GLuint ModelMatrixID = glGetUniformLocation(p, "M");
 	
 	GLuint vertexPosition_modelspaceID = glGetAttribLocation(p, "vertex");
 	d.loadObj("models/cube.obj");
@@ -71,9 +69,6 @@ int main(void)
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, d.getIndices()->size() * sizeof(unsigned short), &(d.getIndices()->at(0)) , GL_STATIC_DRAW);
 	
-	// Get a handle for our "LightPosition" uniform
-	glUseProgram(p);
-	
 	/////////////////////////////////////////////////////////////
 	
 	while (!glfwWindowShouldClose(window)){
@@ -88,6 +83,34 @@ int main(void)
 		//Wylicz macierz modelu
 		glm::mat4 ModelMatrix = glm::rotate(glm::mat4(1.0f),60.0f,glm::vec3(0.5,1,0)); 
 		glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
+		
+		glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
+		
+		// 1rst attribute buffer : vertices
+		glEnableVertexAttribArray(vertexPosition_modelspaceID);
+		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+		glVertexAttribPointer(
+			vertexPosition_modelspaceID,  // The attribute we want to configure
+			4,                            // size
+			GL_FLOAT,                     // type
+			GL_FALSE,                     // normalized?
+			0,                            // stride
+			(void*)0                      // array buffer offset
+		);
+		
+		// Index buffer
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
+		
+		// Draw the triangles !
+		glDrawElements(
+			GL_TRIANGLES,      // mode
+			d.getIndices()->size(),    // count
+			GL_UNSIGNED_SHORT,   // type
+			(void*)0           // element array buffer offset
+		);
+		
+		
+		glDisableVertexAttribArray(vertexPosition_modelspaceID);
 		
 		glfwSwapBuffers(window);
 		glfwPollEvents();
