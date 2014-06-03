@@ -6,10 +6,6 @@
 
 using namespace std;
 
-void drawFrame(){
-
-}
-
 static void error_callback(int error, const char* description){
 	fputs(description, stderr);
 }
@@ -49,18 +45,14 @@ int main(void)
 	glDepthFunc(GL_LESS);
 	// Cull triangles which normal is not towards the camera
 	glEnable(GL_CULL_FACE);
-		
-	Drawable *d = new Drawable();
-	d->loadShaders("shaders/vertex/bat.txt", "shaders/fragment/bat.txt");
-	delete d;
 	
 	while (!glfwWindowShouldClose(window)){
-		drawFrame();
+
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
 	glfwDestroyWindow(window);
 	glfwTerminate();
-	
+
 	return 0;
 }

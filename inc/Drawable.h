@@ -13,6 +13,8 @@
 #include <GLFW/glfw3.h>
 
 #include "Exception.h"
+#include "vboindexer.hpp"
+#include "objloader.hpp"
 
 class Drawable{
 	
@@ -20,29 +22,26 @@ class Drawable{
 		void deleteVertices();
 		void deleteTextureVertices();
 		void deleteVertexNormals();
-		void deleteVertexIndices();
-		void deleteTextureIndices();
-		void deleteNormalIndices();
-		glm::vec4* strToVec4( std::string line );
-		glm::vec2* strToVec2( std::string line );
-		void fillIndices( std::string line, std::vector< unsigned int > *vi, std::vector< unsigned int > *ti, std::vector< unsigned int > *ni );
+		void deleteIndices();
 		
 	protected: 		
-		std::vector< glm::vec4* > *vertices;
-		std::vector< glm::vec2* > *texture_vertices;
-		std::vector< glm::vec4* > *vertex_normals;
-		std::vector< unsigned int > *normal_indices;
-		std::vector< unsigned int > *vertex_indices;
-		std::vector< unsigned int > *texture_indices;
+		std::vector< glm::vec4 > *vertices;
+		std::vector< glm::vec2 > *texture_vertices;
+		std::vector< glm::vec4 > *vertex_normals;
+		std::vector< unsigned short > *indices;
 		GLuint shader_program;
+		glm::mat4 *model_matrix;
 		
 	
 	public:
 		Drawable();
 		~Drawable();
-		const std::vector< glm::vec4* >* getVertices();
-		Drawable& loadObj(const char *path); // Ładować tym wyłącznie modele zbudowane z trójkątów!
+		const std::vector< glm::vec4 >* getVertices();
+		Drawable& loadObj(const char *path);
 		Drawable& loadShaders(const char * vertex_file_path,const char * fragment_file_path);
+		GLuint getShaderProgram();
+		const glm::mat4* getModelMatrix();
+		Drawable& setModelMatrix( glm::mat4* matrix );
 };
 
 #endif
