@@ -1,4 +1,5 @@
 game
 obj/*
 glm/*
+textures/*
 Makefile

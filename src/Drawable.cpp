@@ -172,8 +172,14 @@ Drawable& Drawable::loadObj(const char *path){
 	this->deleteVertices();
 	this->deleteUVs();
 	this->deleteNormals();
+	this->deleteIndices();
 	
-	indexVBO(tmp_vertices, tmp_uvs, tmp_normals, *(this->indices), *(this->vertices), *(this->uvs), *(this->normals));
+	this->vertices = new std::vector< glm::vec4 >();
+	this->normals = new std::vector< glm::vec4 >();
+	this->uvs = new std::vector< glm::vec2 >();
+	this->indices = new std::vector< unsigned short >();
+	
+	indexVBO(tmp_vertices, tmp_uvs, tmp_normals, *(this->indices), *(this->vertices), *(this->uvs), *(this->normals) );
 	
 	return *(this);
 }

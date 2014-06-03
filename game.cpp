@@ -77,11 +77,11 @@ int main(void)
 		glUseProgram(p);
 		
 		//Wylicz macierz rzutowania
-		glm::mat4 ProjectionMatrix = glm::perspective(60.0f, 800.0f/600.0f, 1.0f, 100.0f);
+		glm::mat4 ProjectionMatrix = glm::perspective(1.0f, 800.0f/600.0f, 1.0f, 100.0f);
 		//Wylicz macierz widoku
 		glm::mat4 ViewMatrix = glm::lookAt(glm::vec3(0.0f,0.0f,7.0f),glm::vec3(0.0f,0.0f,0.0f),glm::vec3(0.0f,1.0f,0.0f)); 
 		//Wylicz macierz modelu
-		glm::mat4 ModelMatrix = glm::rotate(glm::mat4(1.0f),60.0f,glm::vec3(0.5,1,0)); 
+		glm::mat4 ModelMatrix = glm::rotate(glm::mat4(1.0f),1.0f,glm::vec3(0.5,1,0)); 
 		glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
 		
 		glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
