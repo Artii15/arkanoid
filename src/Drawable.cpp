@@ -177,3 +177,7 @@ Drawable& Drawable::loadObj(const char *path){
 	
 	return *(this);
 }
+
+const std::vector< unsigned short >* Drawable::getIndices(){
+	return this->indices;
+}

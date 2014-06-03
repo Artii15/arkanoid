@@ -37,6 +37,7 @@ class Drawable{
 		Drawable();
 		~Drawable();
 		const std::vector< glm::vec4 >* getVertices();
+		const std::vector< unsigned short >* getIndices();
 		Drawable& loadObj(const char *path);
 		Drawable& loadShaders(const char * vertex_file_path,const char * fragment_file_path);
 		GLuint getShaderProgram();
