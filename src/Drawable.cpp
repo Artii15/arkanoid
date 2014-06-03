@@ -2,8 +2,8 @@
 
 Drawable::Drawable(){
 	this->vertices = NULL;
-	this->texture_vertices = NULL;
-	this->vertex_normals = NULL;
+	this->uvs = NULL;
+	this->normals = NULL;
 	this->indices = NULL;
 
 	this->shader_program = 0;
@@ -12,8 +12,8 @@ Drawable::Drawable(){
 
 Drawable::~Drawable(){
 	this->deleteVertices();	
-	this->deleteTextureVertices();
-	this->deleteVertexNormals();
+	this->deleteUVs();
+	this->deleteNormals();
 	this->deleteIndices();
 	if( this->shader_program != 0 ){
 		glDeleteProgram( this->shader_program );
@@ -33,15 +33,15 @@ void Drawable::deleteVertices(){
 	}
 }
 
-void Drawable::deleteTextureVertices(){
-	if( this->texture_vertices != NULL ){
-		delete this->texture_vertices;
+void Drawable::deleteUVs(){
+	if( this->uvs != NULL ){
+		delete this->uvs;
 	}
 }
 
-void Drawable::deleteVertexNormals(){
-	if( this->vertex_normals != NULL ){
-		delete this->vertex_normals;
+void Drawable::deleteNormals(){
+	if( this->normals != NULL ){
+		delete this->normals;
 	}
 }
 
@@ -160,9 +160,20 @@ Drawable& Drawable::setModelMatrix( glm::mat4* matrix ){
 }
 
 Drawable& Drawable::loadObj(const char *path){
-	if( !loadOBJ(path, *(this->vertices), *(this->texture_vertices), *(this->vertex_normals)) ){
-		//throw new Exception("Nie udało się otworzyć pliku modelu");
+	
+	std::vector< glm::vec4 > tmp_vertices;
+	std::vector< glm::vec2 > tmp_uvs;
+	std::vector< glm::vec4 > tmp_normals;
+	
+	if( !loadOBJ(path, tmp_vertices, tmp_uvs, tmp_normals ) ){
+		throw new Exception("Nie udało się otworzyć pliku modelu");
 	}
+	
+	this->deleteVertices();
+	this->deleteUVs();
+	this->deleteNormals();
+	
+	indexVBO(tmp_vertices, tmp_uvs, tmp_normals, *(this->indices), *(this->vertices), *(this->uvs), *(this->normals));
 	
 	return *(this);
 }

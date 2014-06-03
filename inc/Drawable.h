@@ -20,14 +20,14 @@ class Drawable{
 	
 	private:
 		void deleteVertices();
-		void deleteTextureVertices();
-		void deleteVertexNormals();
+		void deleteUVs();
+		void deleteNormals();
 		void deleteIndices();
 		
 	protected: 		
 		std::vector< glm::vec4 > *vertices;
-		std::vector< glm::vec2 > *texture_vertices;
-		std::vector< glm::vec4 > *vertex_normals;
+		std::vector< glm::vec2 > *uvs;
+		std::vector< glm::vec4 > *normals;
 		std::vector< unsigned short > *indices;
 		GLuint shader_program;
 		glm::mat4 *model_matrix;
