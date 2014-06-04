@@ -5,6 +5,7 @@ Drawable::Drawable(){
 	this->uvs = NULL;
 	this->normals = NULL;
 	this->indices = NULL;
+	this->shaders_loaded = false;
 
 	this->shader_program = 0;
 	this->model_matrix = new glm::mat4(1.0f);
@@ -60,6 +61,11 @@ const std::vector< glm::vec4 >* Drawable::getVertices(){
 }
 
 Drawable& Drawable::loadShaders(const char * vertex_file_path,const char * fragment_file_path){
+	
+	if( this->shaders_loaded ){
+		printf("Shadery już zostały załadowane\n");
+		return *(this);
+	}
 	
 	// Create the shaders
 	GLuint VertexShaderID = glCreateShader(GL_VERTEX_SHADER);
@@ -150,6 +156,7 @@ Drawable& Drawable::loadShaders(const char * vertex_file_path,const char * fragm
 	glDeleteShader(FragmentShaderID);
 	
 	this->shader_program = ProgramID;
+	this->shaders_loaded = true;
 	
 	return *(this);
 }
@@ -171,6 +178,10 @@ Drawable& Drawable::setModelMatrix( glm::mat4* matrix ){
 
 Drawable& Drawable::loadObj(const char *path){
 	
+	if( !this->shaders_loaded ){
+		throw new Exception("Próba ładowania obiektu, bez załadowanych shaderów");
+	}
+	
 	std::vector< glm::vec4 > tmp_vertices;
 	std::vector< glm::vec2 > tmp_uvs;
 	std::vector< glm::vec4 > tmp_normals;
@@ -190,6 +201,11 @@ Drawable& Drawable::loadObj(const char *path){
 	this->indices = new std::vector< unsigned short >();
 	
 	indexVBO(tmp_vertices, tmp_uvs, tmp_normals, *(this->indices), *(this->vertices), *(this->uvs), *(this->normals) );
+	// Zakładamy że w shaderze każdego obiektu będą atrybuty określające wsp. wierzchołków, tekstur oraz wektory normalne
+	// nazwane tak jak w kolejnych trzech linijkach
+	this->addVBO( this->vertices, this->vertices->size(), sizeof(glm::vec4), "vertex" );
+	this->addVBO( this->uvs, this->uvs->size(), sizeof(glm::vec2), "uv" );
+	this->addVBO( this->normals, this->normals->size(), sizeof(glm::vec4), "normal" );
 	
 	return *(this);
 }
@@ -198,12 +214,13 @@ const std::vector< unsigned short >* Drawable::getIndices(){
 	return this->indices;
 }
 
-Drawable& Drawable::addVBO(void *data, int vertexCount, int vertexSize, char* attributeName){
+Drawable& Drawable::addVBO(void *data, int vertexCount, int vertexSize, const char* attributeName){
 	GLuint handle;
 	
 	glGenBuffers(1,&handle);//Wygeneruj uchwyt na Vertex Buffer Object (VBO), który będzie zawierał tablicę danych
 	glBindBuffer(GL_ARRAY_BUFFER,handle);  //Uaktywnij wygenerowany uchwyt VBO 
 	glBufferData(GL_ARRAY_BUFFER, vertexCount*vertexSize, data, GL_STATIC_DRAW);//Wgraj tablicę do VBO
+	this->VBOs.push_back(handle);
 	
 	glBindVertexArray(this->vao);
 	

@@ -8,7 +8,7 @@ uniform mat4 M;
 
 //Atrybuty
 in vec4 vertex; //wspolrzedne wierzcholka w przestrzeni modelu
-in vec4 color;  //kolor wierzcholka (na razie ignorowany)
+in vec2 uv;  //kolor wierzcholka (na razie ignorowany)
 in vec4 normal; //wektor normalny w wierzcholku (na razie ignorowany)
 
 void main(void) {
