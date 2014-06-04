@@ -12,6 +12,9 @@ Drawable::Drawable(){
 	
 	// Tworzenie VAO
 	glGenVertexArrays(1, &(this->vao) );
+	
+	glGenBuffers(1,&(this->buf_indices));
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buf_indices);
 }
 
 Drawable::~Drawable(){
@@ -29,7 +32,11 @@ Drawable::~Drawable(){
 		glDeleteBuffers(1,&(VBOs[i]));
 	}
 	
+	glDeleteBuffers( 1, &(this->buf_indices) );
+	
 	glDeleteVertexArrays( 1, &(this->vao) );
+	//Wykasuj program shaderów
+	glDeleteProgram(this->shader_program);
 }
 
 void Drawable::deleteIndices(){
@@ -207,6 +214,8 @@ Drawable& Drawable::loadObj(const char *path){
 	this->addVBO( this->uvs, this->uvs->size(), sizeof(glm::vec2), "uv" );
 	this->addVBO( this->normals, this->normals->size(), sizeof(glm::vec4), "normal" );
 	
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->indices->size() * sizeof(unsigned short), &(this->indices->at(0)), GL_STATIC_DRAW);
+	
 	return *(this);
 }
 
@@ -231,4 +240,34 @@ Drawable& Drawable::addVBO(void *data, int vertexCount, int vertexSize, const ch
 	glBindVertexArray(0);
 	
 	return *(this);
+}
+
+Drawable& Drawable::draw(){
+	glUseProgram(this->shader_program);
+	
+	//Wylicz macierz rzutowania
+	glm::mat4 ProjectionMatrix = glm::perspective(1.0f, 800.0f/600.0f, 1.0f, 100.0f);
+	//Wylicz macierz widoku
+	glm::mat4 ViewMatrix = glm::lookAt(glm::vec3(0.0f,0.0f,7.0f),glm::vec3(0.0f,0.0f,0.0f),glm::vec3(0.0f,1.0f,0.0f)); 
+	//Wylicz macierz modelu
+	glm::mat4 ModelMatrix = glm::rotate(glm::mat4(1.0f),1.0f,glm::vec3(0.5,1,0)); 
+	glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
+	
+	glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
+	
+	glBindVertexArray(this->vao);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->buf_indices);
+	
+	//Narysowanie obiektu
+	glDrawArrays(GL_TRIANGLES,0,vertexCount);
+	// Draw the triangles !
+	glDrawElements(
+		GL_TRIANGLES,      // mode
+		this->indices->size(),    // count
+		GL_UNSIGNED_SHORT,   // type
+		(void*)0           // element array buffer offset
+	);
+	
+	//Posprzštanie po sobie (niekonieczne w sumie jeżeli korzystamy z VAO dla każdego rysowanego obiektu)
+	glBindVertexArray(0);
 }

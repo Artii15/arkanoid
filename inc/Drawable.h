@@ -36,6 +36,7 @@ class Drawable{
 		GLuint vao;
 		std::vector< GLuint > VBOs;
 		bool shaders_loaded;
+		GLuint buf_indices;
 	
 	public:
 		Drawable();
@@ -47,6 +48,7 @@ class Drawable{
 		GLuint getShaderProgram();
 		const glm::mat4* getModelMatrix();
 		Drawable& setModelMatrix( glm::mat4* matrix );
+		Drawable& draw();
 };
 
 #endif
