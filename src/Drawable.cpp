@@ -8,6 +8,11 @@ Drawable::Drawable(){
 
 	this->shader_program = 0;
 	this->model_matrix = new glm::mat4(1.0f);
+	this->shadersLoaded = false;
+	this->basicVBOsLoaded = false;
+	
+	// Tworzenie VAO
+	glGenVertexArrays(1, &(this->vao) );
 }
 
 Drawable::~Drawable(){
@@ -19,6 +24,7 @@ Drawable::~Drawable(){
 		glDeleteProgram( this->shader_program );
 	}
 	delete this->model_matrix;
+	glDeleteVertexArrays( 1, &(this->vao) );
 }
 
 void Drawable::deleteIndices(){
@@ -50,7 +56,12 @@ const std::vector< glm::vec4 >* Drawable::getVertices(){
 }
 
 Drawable& Drawable::loadShaders(const char * vertex_file_path,const char * fragment_file_path){
-
+	
+	if( this->shadersLoaded ){
+		printf("Shadery już załadowane\n");
+		return *(this);
+	}
+	
 	// Create the shaders
 	GLuint VertexShaderID = glCreateShader(GL_VERTEX_SHADER);
 	GLuint FragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
@@ -140,6 +151,7 @@ Drawable& Drawable::loadShaders(const char * vertex_file_path,const char * fragm
 	glDeleteShader(FragmentShaderID);
 	
 	this->shader_program = ProgramID;
+	this->shadersLoaded = true;
 	
 	return *(this);
 }
@@ -180,10 +192,23 @@ Drawable& Drawable::loadObj(const char *path){
 	this->indices = new std::vector< unsigned short >();
 	
 	indexVBO(tmp_vertices, tmp_uvs, tmp_normals, *(this->indices), *(this->vertices), *(this->uvs), *(this->normals) );
+	this->loadVBOs();
 	
 	return *(this);
 }
 
 const std::vector< unsigned short >* Drawable::getIndices(){
 	return this->indices;
+}
+
+Drawable& Drawable::loadVBOs(){
+	if( basicVBOsLoaded ){
+		printf("VBO są już załadowane\n");
+		return *(this);
+	}
+	
+	// Ładowanie VBO wierzchołków, tekstur oraz wektorów normalnych - pomyśleć też o zastosowaniu VAO
+	
+	basicVBOsLoaded = true;
+	return *(this);
 }

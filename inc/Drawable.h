@@ -24,14 +24,20 @@ class Drawable{
 		void deleteNormals();
 		void deleteIndices();
 		
-	protected: 		
+		bool shadersLoaded;
+		bool basicVBOsLoaded;
+		
+	protected:
+		Drawable& loadVBOs();
+			
 		std::vector< glm::vec4 > *vertices;
 		std::vector< glm::vec2 > *uvs;
 		std::vector< glm::vec4 > *normals;
 		std::vector< unsigned short > *indices;
 		GLuint shader_program;
 		glm::mat4 *model_matrix;
-		
+		GLuint vao;
+		GLuint MVPid;	
 	
 	public:
 		Drawable();
