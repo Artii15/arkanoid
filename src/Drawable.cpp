@@ -8,8 +8,6 @@ Drawable::Drawable(){
 
 	this->shader_program = 0;
 	this->model_matrix = new glm::mat4(1.0f);
-	this->shadersLoaded = false;
-	this->basicVBOsLoaded = false;
 	
 	// Tworzenie VAO
 	glGenVertexArrays(1, &(this->vao) );
@@ -24,6 +22,12 @@ Drawable::~Drawable(){
 		glDeleteProgram( this->shader_program );
 	}
 	delete this->model_matrix;
+	
+	// Usuwanie VBO
+	for (unsigned int i=0; i<VBOs.size(); i++){
+		glDeleteBuffers(1,&(VBOs[i]));
+	}
+	
 	glDeleteVertexArrays( 1, &(this->vao) );
 }
 
@@ -56,11 +60,6 @@ const std::vector< glm::vec4 >* Drawable::getVertices(){
 }
 
 Drawable& Drawable::loadShaders(const char * vertex_file_path,const char * fragment_file_path){
-	
-	if( this->shadersLoaded ){
-		printf("Shadery już załadowane\n");
-		return *(this);
-	}
 	
 	// Create the shaders
 	GLuint VertexShaderID = glCreateShader(GL_VERTEX_SHADER);
@@ -151,7 +150,6 @@ Drawable& Drawable::loadShaders(const char * vertex_file_path,const char * fragm
 	glDeleteShader(FragmentShaderID);
 	
 	this->shader_program = ProgramID;
-	this->shadersLoaded = true;
 	
 	return *(this);
 }
@@ -192,7 +190,6 @@ Drawable& Drawable::loadObj(const char *path){
 	this->indices = new std::vector< unsigned short >();
 	
 	indexVBO(tmp_vertices, tmp_uvs, tmp_normals, *(this->indices), *(this->vertices), *(this->uvs), *(this->normals) );
-	this->loadVBOs();
 	
 	return *(this);
 }
@@ -201,14 +198,20 @@ const std::vector< unsigned short >* Drawable::getIndices(){
 	return this->indices;
 }
 
-Drawable& Drawable::loadVBOs(){
-	if( basicVBOsLoaded ){
-		printf("VBO są już załadowane\n");
-		return *(this);
-	}
+Drawable& Drawable::addVBO(void *data, int vertexCount, int vertexSize, char* attributeName){
+	GLuint handle;
 	
-	// Ładowanie VBO wierzchołków, tekstur oraz wektorów normalnych - pomyśleć też o zastosowaniu VAO
+	glGenBuffers(1,&handle);//Wygeneruj uchwyt na Vertex Buffer Object (VBO), który będzie zawierał tablicę danych
+	glBindBuffer(GL_ARRAY_BUFFER,handle);  //Uaktywnij wygenerowany uchwyt VBO 
+	glBufferData(GL_ARRAY_BUFFER, vertexCount*vertexSize, data, GL_STATIC_DRAW);//Wgraj tablicę do VBO
 	
-	basicVBOsLoaded = true;
+	glBindVertexArray(this->vao);
+	
+	GLuint location = glGetAttribLocation(this->shader_program, attributeName); //Pobierz numery slotów dla atrybutu
+	glEnableVertexAttribArray(location); //Włącz używanie atrybutu o numerze slotu zapisanym w zmiennej location
+	glVertexAttribPointer(location,vertexSize,GL_FLOAT, GL_FALSE, 0, NULL); //Dane do slotu location mają być brane z aktywnego VBO
+	
+	glBindVertexArray(0);
+	
 	return *(this);
 }
