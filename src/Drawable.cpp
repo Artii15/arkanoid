@@ -210,9 +210,9 @@ Drawable& Drawable::loadObj(const char *path){
 	indexVBO(tmp_vertices, tmp_uvs, tmp_normals, *(this->indices), *(this->vertices), *(this->uvs), *(this->normals) );
 	// Zakładamy że w shaderze każdego obiektu będą atrybuty określające wsp. wierzchołków, tekstur oraz wektory normalne
 	// nazwane tak jak w kolejnych trzech linijkach
-	this->addVBO( this->vertices, this->vertices->size(), sizeof(glm::vec4), "vertex" );
-	this->addVBO( this->uvs, this->uvs->size(), sizeof(glm::vec2), "uv" );
-	this->addVBO( this->normals, this->normals->size(), sizeof(glm::vec4), "normal" );
+	this->addVBO( &( this->vertices->at(0) ), this->vertices->size(), sizeof(glm::vec4), "vertex" );
+	this->addVBO( &( this->uvs->at(0) ), this->uvs->size(), sizeof(glm::vec2), "uv" );
+	this->addVBO( &( this->normals->at(0) ), this->normals->size(), sizeof(glm::vec4), "normal" );
 	
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->indices->size() * sizeof(unsigned short), &(this->indices->at(0)), GL_STATIC_DRAW);
 	
@@ -260,8 +260,6 @@ Drawable& Drawable::draw(){
 	glBindVertexArray(this->vao);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->buf_indices);
 	
-	//Narysowanie obiektu
-	glDrawArrays(GL_TRIANGLES,0, this->indices->size());
 	// Draw the triangles !
 	glDrawElements(
 		GL_TRIANGLES,      // mode
