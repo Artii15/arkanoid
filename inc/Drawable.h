@@ -11,6 +11,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <GLFW/glfw3.h>
+#define GLM_FORCE_RADIANS
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
 
 #include "Exception.h"
 #include "vboindexer.hpp"

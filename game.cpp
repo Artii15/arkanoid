@@ -52,65 +52,14 @@ int main(void)
 	//////////// Ładowanie do pamięci karty //////////////////////
 	Drawable d;
 	d.loadShaders("shaders/vertex/bat.txt", "shaders/fragment/bat.txt");
-	GLuint p = d.getShaderProgram();
-	GLuint MatrixID = glGetUniformLocation(p, "MVP");
-	
-	GLuint vertexPosition_modelspaceID = glGetAttribLocation(p, "vertex");
 	d.loadObj("models/cube.obj");
-		///// VBO i to co z tym związane ////////////
-	GLuint vertexbuffer;
-	glGenBuffers(1, &vertexbuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-	glBufferData(GL_ARRAY_BUFFER, d.getVertices()->size() * sizeof(glm::vec4), &(d.getVertices()->at(0)), GL_STATIC_DRAW);
-	
-	// Generate a buffer for the indices as well
-	GLuint elementbuffer;
-	glGenBuffers(1, &elementbuffer);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, d.getIndices()->size() * sizeof(unsigned short), &(d.getIndices()->at(0)) , GL_STATIC_DRAW);
 	
 	/////////////////////////////////////////////////////////////
 	
 	while (!glfwWindowShouldClose(window)){
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
-		glUseProgram(p);
-		
-		//Wylicz macierz rzutowania
-		glm::mat4 ProjectionMatrix = glm::perspective(1.0f, 800.0f/600.0f, 1.0f, 100.0f);
-		//Wylicz macierz widoku
-		glm::mat4 ViewMatrix = glm::lookAt(glm::vec3(0.0f,0.0f,7.0f),glm::vec3(0.0f,0.0f,0.0f),glm::vec3(0.0f,1.0f,0.0f)); 
-		//Wylicz macierz modelu
-		glm::mat4 ModelMatrix = glm::rotate(glm::mat4(1.0f),1.0f,glm::vec3(0.5,1,0)); 
-		glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
-		
-		glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
-		
-		// 1rst attribute buffer : vertices
-		glEnableVertexAttribArray(vertexPosition_modelspaceID);
-		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-		glVertexAttribPointer(
-			vertexPosition_modelspaceID,  // The attribute we want to configure
-			4,                            // size
-			GL_FLOAT,                     // type
-			GL_FALSE,                     // normalized?
-			0,                            // stride
-			(void*)0                      // array buffer offset
-		);
-		
-		// Index buffer
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
-		
-		// Draw the triangles !
-		glDrawElements(
-			GL_TRIANGLES,      // mode
-			d.getIndices()->size(),    // count
-			GL_UNSIGNED_SHORT,   // type
-			(void*)0           // element array buffer offset
-		);
-		
-		
-		glDisableVertexAttribArray(vertexPosition_modelspaceID);
+		d.draw();
 		
 		glfwSwapBuffers(window);
 		glfwPollEvents();

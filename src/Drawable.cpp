@@ -245,6 +245,8 @@ Drawable& Drawable::addVBO(void *data, int vertexCount, int vertexSize, const ch
 Drawable& Drawable::draw(){
 	glUseProgram(this->shader_program);
 	
+	//////////////// Poniższe obliczenia są tymczasowe, docelowo macierz widoku oraz ////////////////////////////
+	//////////////// rzutowania mają być przesyłane jako parametr                    ////////////////////////////
 	//Wylicz macierz rzutowania
 	glm::mat4 ProjectionMatrix = glm::perspective(1.0f, 800.0f/600.0f, 1.0f, 100.0f);
 	//Wylicz macierz widoku
@@ -253,13 +255,13 @@ Drawable& Drawable::draw(){
 	glm::mat4 ModelMatrix = glm::rotate(glm::mat4(1.0f),1.0f,glm::vec3(0.5,1,0)); 
 	glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
 	
-	glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
+	glUniformMatrix4fv(glGetAttribLocation(this->shader_program, "MVP"), 1, GL_FALSE, &MVP[0][0]);
 	
 	glBindVertexArray(this->vao);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->buf_indices);
 	
 	//Narysowanie obiektu
-	glDrawArrays(GL_TRIANGLES,0,vertexCount);
+	glDrawArrays(GL_TRIANGLES,0, this->indices->size());
 	// Draw the triangles !
 	glDrawElements(
 		GL_TRIANGLES,      // mode
@@ -268,6 +270,8 @@ Drawable& Drawable::draw(){
 		(void*)0           // element array buffer offset
 	);
 	
-	//Posprzštanie po sobie (niekonieczne w sumie jeżeli korzystamy z VAO dla każdego rysowanego obiektu)
+	//Posprzątanie po sobie (niekonieczne w sumie jeżeli korzystamy z VAO dla każdego rysowanego obiektu)
 	glBindVertexArray(0);
+	
+	return *(this);
 }
