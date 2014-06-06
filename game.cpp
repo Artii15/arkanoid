@@ -50,22 +50,25 @@ int main(void)
 	glEnable(GL_CULL_FACE);
 	
 	//////////// Ładowanie do pamięci karty //////////////////////
-	Drawable d;
-	d.loadShaders("shaders/vertex/bat.txt", "shaders/fragment/bat.txt");
-	d.loadObj("models/cube.obj");
+	Drawable *d = new Drawable();
+	d->loadShaders("shaders/vertex/bat.txt", "shaders/fragment/bat.txt");
+	d->loadObj("models/cube.obj");	
 	
 	/////////////////////////////////////////////////////////////
 	
 	while (!glfwWindowShouldClose(window)){
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
-		d.draw();
+		d->draw();
 		
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
+	
+	delete d;
+	
 	glfwDestroyWindow(window);
 	glfwTerminate();
-
+	
 	return 0;
 }

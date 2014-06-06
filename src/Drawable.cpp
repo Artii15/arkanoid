@@ -12,9 +12,6 @@ Drawable::Drawable(){
 	
 	// Tworzenie VAO
 	glGenVertexArrays(1, &(this->vao) );
-	
-	glGenBuffers(1,&(this->buf_indices));
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buf_indices);
 }
 
 Drawable::~Drawable(){
@@ -31,8 +28,6 @@ Drawable::~Drawable(){
 	for (unsigned int i=0; i<VBOs.size(); i++){
 		glDeleteBuffers(1,&(VBOs[i]));
 	}
-	
-	glDeleteBuffers( 1, &(this->buf_indices) );
 	
 	glDeleteVertexArrays( 1, &(this->vao) );
 	//Wykasuj program shaderów
@@ -208,38 +203,12 @@ Drawable& Drawable::loadObj(const char *path){
 	this->indices = new std::vector< unsigned short >();
 	
 	indexVBO(tmp_vertices, tmp_uvs, tmp_normals, *(this->indices), *(this->vertices), *(this->uvs), *(this->normals) );
-	// Zakładamy że w shaderze każdego obiektu będą atrybuty określające wsp. wierzchołków, tekstur oraz wektory normalne
-	// nazwane tak jak w kolejnych trzech linijkach
-	this->addVBO( &( this->vertices->at(0) ), this->vertices->size(), sizeof(glm::vec4), "vertex" );
-	this->addVBO( &( this->uvs->at(0) ), this->uvs->size(), sizeof(glm::vec2), "uv" );
-	this->addVBO( &( this->normals->at(0) ), this->normals->size(), sizeof(glm::vec4), "normal" );
-	
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->indices->size() * sizeof(unsigned short), &(this->indices->at(0)), GL_STATIC_DRAW);
 	
 	return *(this);
 }
 
 const std::vector< unsigned short >* Drawable::getIndices(){
 	return this->indices;
-}
-
-Drawable& Drawable::addVBO(void *data, int vertexCount, int vertexSize, const char* attributeName){
-	GLuint handle;
-	
-	glGenBuffers(1,&handle);//Wygeneruj uchwyt na Vertex Buffer Object (VBO), który będzie zawierał tablicę danych
-	glBindBuffer(GL_ARRAY_BUFFER,handle);  //Uaktywnij wygenerowany uchwyt VBO 
-	glBufferData(GL_ARRAY_BUFFER, vertexCount*vertexSize, data, GL_STATIC_DRAW);//Wgraj tablicę do VBO
-	this->VBOs.push_back(handle);
-	
-	glBindVertexArray(this->vao);
-	
-	GLuint location = glGetAttribLocation(this->shader_program, attributeName); //Pobierz numery slotów dla atrybutu
-	glEnableVertexAttribArray(location); //Włącz używanie atrybutu o numerze slotu zapisanym w zmiennej location
-	glVertexAttribPointer(location,vertexSize,GL_FLOAT, GL_FALSE, 0, NULL); //Dane do slotu location mają być brane z aktywnego VBO
-	
-	glBindVertexArray(0);
-	
-	return *(this);
 }
 
 Drawable& Drawable::draw(){
@@ -257,19 +226,7 @@ Drawable& Drawable::draw(){
 	
 	glUniformMatrix4fv(glGetAttribLocation(this->shader_program, "MVP"), 1, GL_FALSE, &MVP[0][0]);
 	
-	glBindVertexArray(this->vao);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->buf_indices);
 	
-	// Draw the triangles !
-	glDrawElements(
-		GL_TRIANGLES,      // mode
-		this->indices->size(),    // count
-		GL_UNSIGNED_SHORT,   // type
-		(void*)0           // element array buffer offset
-	);
-	
-	//Posprzątanie po sobie (niekonieczne w sumie jeżeli korzystamy z VAO dla każdego rysowanego obiektu)
-	glBindVertexArray(0);
-	
+		
 	return *(this);
 }

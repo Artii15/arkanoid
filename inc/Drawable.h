@@ -27,9 +27,7 @@ class Drawable{
 		void deleteNormals();
 		void deleteIndices();
 		
-	protected:
-		Drawable& addVBO(void *data, int vertexCount, int vertexSize, const char* attributeName);
-			
+	protected:			
 		std::vector< glm::vec4 > *vertices;
 		std::vector< glm::vec2 > *uvs;
 		std::vector< glm::vec4 > *normals;
@@ -39,7 +37,6 @@ class Drawable{
 		GLuint vao;
 		std::vector< GLuint > VBOs;
 		bool shaders_loaded;
-		GLuint buf_indices;
 	
 	public:
 		Drawable();
