@@ -57,8 +57,12 @@ int main(void)
 	
 	while (!glfwWindowShouldClose(window)){
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		//Wylicz macierz rzutowania
+		glm::mat4 p = glm::perspective(1.0f, 800.0f/600.0f, 1.0f, 100.0f);
+		//Wylicz macierz widoku
+		glm::mat4 v = glm::lookAt(glm::vec3(0.0f,0.0f,7.0f),glm::vec3(0.0f,0.0f,0.0f),glm::vec3(0.0f,1.0f,0.0f)); 
 		
-		d->draw();
+		d->draw(v, p);
 		
 		glfwSwapBuffers(window);
 		glfwPollEvents();

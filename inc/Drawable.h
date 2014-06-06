@@ -53,7 +53,7 @@ class Drawable{
 		GLuint getShaderProgram();
 		const glm::mat4* getModelMatrix();
 		Drawable& setModelMatrix( glm::mat4* matrix );
-		Drawable& draw();
+		Drawable& draw(glm::mat4& v, glm::mat4& p);
 };
 
 #endif

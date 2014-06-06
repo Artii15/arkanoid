@@ -205,11 +205,15 @@ Drawable& Drawable::loadObj(const char *path){
 	indexVBO(tmp_vertices, tmp_uvs, tmp_normals, *(this->indices), *(this->vertices), *(this->uvs), *(this->normals) );
 	
 	GLuint v_buf = this->makeBuffer(&(this->vertices->at(0)), this->vertices->size(), sizeof(glm::vec4));
+	GLuint uv_buf = this->makeBuffer(&(this->uvs->at(0)), this->uvs->size(), sizeof(glm::vec2));
+	GLuint n_buf = this->makeBuffer(&(this->normals->at(0)), this->normals->size(), sizeof(glm::vec4));
 	GLuint i_buf = this->makeElementBuffer(&(this->indices->at(0)), this->indices->size(), sizeof(unsigned short));
 	
 	glBindVertexArray(this->vao);
 	
 	this->assignVBOtoAttribute("vertex", v_buf, 4);
+	this->assignVBOtoAttribute("uvs", uv_buf, 2);
+	this->assignVBOtoAttribute("normals", n_buf, 4);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, i_buf);
 	
 	glBindVertexArray(0);
@@ -221,18 +225,10 @@ const std::vector< unsigned short >* Drawable::getIndices(){
 	return this->indices;
 }
 
-Drawable& Drawable::draw(){
+Drawable& Drawable::draw(glm::mat4& v, glm::mat4& p){
 	glUseProgram(this->shader_program);
 	
-	//////////////// Poniższe obliczenia są tymczasowe, docelowo macierz widoku oraz ////////////////////////////
-	//////////////// rzutowania mają być przesyłane jako parametr                    ////////////////////////////
-	//Wylicz macierz rzutowania
-	glm::mat4 ProjectionMatrix = glm::perspective(1.0f, 800.0f/600.0f, 1.0f, 100.0f);
-	//Wylicz macierz widoku
-	glm::mat4 ViewMatrix = glm::lookAt(glm::vec3(0.0f,0.0f,7.0f),glm::vec3(0.0f,0.0f,0.0f),glm::vec3(0.0f,1.0f,0.0f)); 
-	//Wylicz macierz modelu
-	glm::mat4 ModelMatrix = glm::rotate(glm::mat4(1.0f),1.0f,glm::vec3(0.5,1,0)); 
-	glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
+	glm::mat4 MVP = p * v * (*(this->model_matrix));
 
 	glUniformMatrix4fv(glGetUniformLocation(this->shader_program, "MVP"), 1, GL_FALSE, &MVP[0][0]);
 	
