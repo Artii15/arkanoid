@@ -14,6 +14,7 @@
 #define GLM_FORCE_RADIANS
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/type_ptr.hpp"
 
 #include "Exception.h"
 #include "vboindexer.hpp"
@@ -28,8 +29,8 @@ class Drawable{
 		void deleteIndices();
 		
 	protected:			
-		Drawable& makeBuffer(void *data, int vertexCount, int vertexSize);
-		Drawable& makeElementBuffer(void *data, int vertexCount, int vertexSize);
+		GLuint makeBuffer(void *data, int vertexCount, int vertexSize);
+		GLuint makeElementBuffer(void *data, int vertexCount, int vertexSize);
 		Drawable& assignVBOtoAttribute(const char* attributeName, GLuint bufVBO, int variableSize);
 	
 		std::vector< glm::vec4 > *vertices;

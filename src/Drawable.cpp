@@ -204,11 +204,8 @@ Drawable& Drawable::loadObj(const char *path){
 	
 	indexVBO(tmp_vertices, tmp_uvs, tmp_normals, *(this->indices), *(this->vertices), *(this->uvs), *(this->normals) );
 	
-	this->makeBuffer(&(this->vertices->at(0)), this->vertices->size(), sizeof(float)*4);
-	GLuint v_buf = this->VBOs.back();
-	
-	this->makeElementBuffer(&(this->indices->at(0)), this->indices->size(), sizeof(unsigned short));
-	GLuint i_buf = this->VBOs.back();
+	GLuint v_buf = this->makeBuffer(&(this->vertices->at(0)), this->vertices->size(), sizeof(glm::vec4));
+	GLuint i_buf = this->makeElementBuffer(&(this->indices->at(0)), this->indices->size(), sizeof(unsigned short));
 	
 	glBindVertexArray(this->vao);
 	
@@ -243,14 +240,13 @@ Drawable& Drawable::draw(){
 	
 	//Narysowanie obiektu
 	glDrawElements(GL_TRIANGLES, this->indices->size() ,GL_UNSIGNED_SHORT, NULL); 
-	
 	//Posprzštanie po sobie (niekonieczne w sumie jeżeli korzystamy z VAO dla każdego rysowanego obiektu)
 	glBindVertexArray(0);	
-		
+	
 	return *(this);
 }
 
-Drawable& Drawable::makeBuffer(void *data, int vertexCount, int vertexSize) {
+GLuint Drawable::makeBuffer(void *data, int vertexCount, int vertexSize) {
 	GLuint handle;
 	
 	glGenBuffers(1,&handle);//Wygeneruj uchwyt na Vertex Buffer Object (VBO), który będzie zawierał tablicę danych
@@ -258,17 +254,17 @@ Drawable& Drawable::makeBuffer(void *data, int vertexCount, int vertexSize) {
 	glBufferData(GL_ARRAY_BUFFER, vertexCount*vertexSize, data, GL_STATIC_DRAW);//Wgraj tablicę do VBO
 	this->VBOs.push_back(handle);
 	
-	return *(this);
+	return handle;
 }
 
-Drawable& Drawable::makeElementBuffer(void *data, int vertexCount, int vertexSize){
+GLuint Drawable::makeElementBuffer(void *data, int vertexCount, int vertexSize){
 	GLuint elementbuffer;
 	glGenBuffers(1, &elementbuffer);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, vertexCount * vertexSize, data , GL_STATIC_DRAW);
 	this->VBOs.push_back(elementbuffer);
 	
-	return *(this);
+	return elementbuffer;
 }
 
 Drawable& Drawable::assignVBOtoAttribute(const char* attributeName, GLuint bufVBO, int variableSize){
