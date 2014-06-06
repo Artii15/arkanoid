@@ -28,6 +28,10 @@ class Drawable{
 		void deleteIndices();
 		
 	protected:			
+		Drawable& makeBuffer(void *data, int vertexCount, int vertexSize);
+		Drawable& makeElementBuffer(void *data, int vertexCount, int vertexSize);
+		Drawable& assignVBOtoAttribute(const char* attributeName, GLuint bufVBO, int variableSize);
+	
 		std::vector< glm::vec4 > *vertices;
 		std::vector< glm::vec2 > *uvs;
 		std::vector< glm::vec4 > *normals;

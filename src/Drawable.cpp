@@ -204,6 +204,19 @@ Drawable& Drawable::loadObj(const char *path){
 	
 	indexVBO(tmp_vertices, tmp_uvs, tmp_normals, *(this->indices), *(this->vertices), *(this->uvs), *(this->normals) );
 	
+	this->makeBuffer(&(this->vertices->at(0)), this->vertices->size(), sizeof(float)*4);
+	GLuint v_buf = this->VBOs.back();
+	
+	this->makeElementBuffer(&(this->indices->at(0)), this->indices->size(), sizeof(unsigned short));
+	GLuint i_buf = this->VBOs.back();
+	
+	glBindVertexArray(this->vao);
+	
+	this->assignVBOtoAttribute("vertex", v_buf, 4);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, i_buf);
+	
+	glBindVertexArray(0);
+	
 	return *(this);
 }
 
@@ -213,7 +226,6 @@ const std::vector< unsigned short >* Drawable::getIndices(){
 
 Drawable& Drawable::draw(){
 	glUseProgram(this->shader_program);
-	
 	//////////////// Poniższe obliczenia są tymczasowe, docelowo macierz widoku oraz ////////////////////////////
 	//////////////// rzutowania mają być przesyłane jako parametr                    ////////////////////////////
 	//Wylicz macierz rzutowania
@@ -225,8 +237,45 @@ Drawable& Drawable::draw(){
 	glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
 	
 	glUniformMatrix4fv(glGetAttribLocation(this->shader_program, "MVP"), 1, GL_FALSE, &MVP[0][0]);
-	
-	
 		
+	//Uaktywnienie VAO i tym samym uaktywnienie predefiniowanych w tym VAO powišzań slotów atrybutów z tablicami z danymi
+	glBindVertexArray(this->vao);
+	
+	//Narysowanie obiektu
+	glDrawElements(GL_TRIANGLES, this->indices->size() ,GL_UNSIGNED_SHORT, NULL); 
+	
+	//Posprzštanie po sobie (niekonieczne w sumie jeżeli korzystamy z VAO dla każdego rysowanego obiektu)
+	glBindVertexArray(0);	
+		
+	return *(this);
+}
+
+Drawable& Drawable::makeBuffer(void *data, int vertexCount, int vertexSize) {
+	GLuint handle;
+	
+	glGenBuffers(1,&handle);//Wygeneruj uchwyt na Vertex Buffer Object (VBO), który będzie zawierał tablicę danych
+	glBindBuffer(GL_ARRAY_BUFFER,handle);  //Uaktywnij wygenerowany uchwyt VBO 
+	glBufferData(GL_ARRAY_BUFFER, vertexCount*vertexSize, data, GL_STATIC_DRAW);//Wgraj tablicę do VBO
+	this->VBOs.push_back(handle);
+	
+	return *(this);
+}
+
+Drawable& Drawable::makeElementBuffer(void *data, int vertexCount, int vertexSize){
+	GLuint elementbuffer;
+	glGenBuffers(1, &elementbuffer);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, vertexCount * vertexSize, data , GL_STATIC_DRAW);
+	this->VBOs.push_back(elementbuffer);
+	
+	return *(this);
+}
+
+Drawable& Drawable::assignVBOtoAttribute(const char* attributeName, GLuint bufVBO, int variableSize){
+	GLuint location = glGetAttribLocation(this->shader_program, attributeName); //Pobierz numery slotów dla atrybutu
+	glBindBuffer(GL_ARRAY_BUFFER,bufVBO);  //Uaktywnij uchwyt VBO 
+	glEnableVertexAttribArray(location); //Włącz używanie atrybutu o numerze slotu zapisanym w zmiennej location
+	glVertexAttribPointer(location,variableSize,GL_FLOAT, GL_FALSE, 0, NULL); //Dane do slotu location mają być brane z aktywnego VBO
+	
 	return *(this);
 }
