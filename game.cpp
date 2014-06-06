@@ -53,7 +53,6 @@ int main(void)
 	Drawable *d = new Drawable();
 	d->loadShaders("shaders/vertex/bat.txt", "shaders/fragment/bat.txt");
 	d->loadObj("models/cube.obj");	
-	
 	/////////////////////////////////////////////////////////////
 	
 	while (!glfwWindowShouldClose(window)){

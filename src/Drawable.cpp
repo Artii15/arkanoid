@@ -223,6 +223,7 @@ const std::vector< unsigned short >* Drawable::getIndices(){
 
 Drawable& Drawable::draw(){
 	glUseProgram(this->shader_program);
+	
 	//////////////// Poniższe obliczenia są tymczasowe, docelowo macierz widoku oraz ////////////////////////////
 	//////////////// rzutowania mają być przesyłane jako parametr                    ////////////////////////////
 	//Wylicz macierz rzutowania
@@ -232,9 +233,9 @@ Drawable& Drawable::draw(){
 	//Wylicz macierz modelu
 	glm::mat4 ModelMatrix = glm::rotate(glm::mat4(1.0f),1.0f,glm::vec3(0.5,1,0)); 
 	glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
+
+	glUniformMatrix4fv(glGetUniformLocation(this->shader_program, "MVP"), 1, GL_FALSE, &MVP[0][0]);
 	
-	glUniformMatrix4fv(glGetAttribLocation(this->shader_program, "MVP"), 1, GL_FALSE, &MVP[0][0]);
-		
 	//Uaktywnienie VAO i tym samym uaktywnienie predefiniowanych w tym VAO powišzań slotów atrybutów z tablicami z danymi
 	glBindVertexArray(this->vao);
 	
