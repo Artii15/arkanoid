@@ -33,6 +33,10 @@ Drawable::~Drawable(){
 	glDeleteVertexArrays( 1, &(this->vao) );
 	//Wykasuj program shaderów
 	glDeleteProgram(this->shader_program);
+	// Zwalnianie pamięci po teksturach
+	if( this->texture != 0 ){
+		glDeleteTextures(1, &(this->texture));
+	}
 }
 
 void Drawable::deleteIndices(){
@@ -225,11 +229,19 @@ Drawable& Drawable::draw(const glm::mat4& v, const glm::mat4& p){
 	glUseProgram(this->shader_program);
 	
 	glm::mat4 MVP = p * v * this->model_matrix;
-
+	
+	// Uniformy
 	glUniformMatrix4fv(glGetUniformLocation(this->shader_program, "MVP"), 1, GL_FALSE, &MVP[0][0]);
+	glUniform1i( glGetUniformLocation(this->shader_program, "textureMap0"), 0 );
 	
 	//Uaktywnienie VAO i tym samym uaktywnienie predefiniowanych w tym VAO powišzań slotów atrybutów z tablicami z danymi
 	glBindVertexArray(this->vao);
+	
+	if(this->texture){
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D,this->texture);
+	}
+	
 	
 	//Narysowanie obiektu
 	glDrawElements(GL_TRIANGLES, this->indices->size() ,GL_UNSIGNED_SHORT, NULL); 
@@ -269,7 +281,31 @@ Drawable& Drawable::assignVBOtoAttribute(const char* attributeName, GLuint bufVB
 	return *(this);
 }
 
-Drawable& Drawable::loadTexture(const char* path){
+Drawable& Drawable::loadTexture(const char* filename){
+	GLuint tex;
+	TGAImg img;
+	glActiveTexture(GL_TEXTURE0);
+	if (img.Load(filename)==IMG_OK) {
+		glGenTextures(1,&tex); //Zainicjuj uchwyt tex
+		glBindTexture(GL_TEXTURE_2D,tex); //Przetwarzaj uchwyt tex
+	if (img.GetBPP()==24) //Obrazek 24bit
+	 	glTexImage2D(GL_TEXTURE_2D,0,3,img.GetWidth(),img.GetHeight(),0,
+	  	GL_RGB,GL_UNSIGNED_BYTE,img.GetImg());
+	else if (img.GetBPP()==32) //Obrazek 32bit
+	 	glTexImage2D(GL_TEXTURE_2D,0,4,img.GetWidth(),img.GetHeight(),0,
+	  	GL_RGBA,GL_UNSIGNED_BYTE,img.GetImg());     
+	else {
+	  	printf("Nieobsługiwany format obrazka w pliku: %s \n",filename);
+	}
+	} else {
+		printf("Błąd przy wczytywaniu pliku: %s\n",filename);
+	}
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,GL_REPEAT);
+	
+	this->texture = tex;
 	
 	return *(this);
 }

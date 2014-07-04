@@ -8,9 +8,12 @@ uniform mat4 M;
 
 //Atrybuty
 in vec4 vertex; //wspolrzedne wierzcholka w przestrzeni modelu
-in vec2 uv;  //kolor wierzcholka (na razie ignorowany)
+in vec2 uvs;  //kolor wierzcholka (na razie ignorowany)
 in vec4 normal; //wektor normalny w wierzcholku (na razie ignorowany)
+
+out vec2 iuvs; // Współrzędne tekstur do interpolacji 
 
 void main(void) {
 	gl_Position=MVP*vertex;
+	iuvs = uvs;
 }

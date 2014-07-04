@@ -1,7 +1,12 @@
 #version 130
 
+in vec2 iuvs; // Współrzędne teksturowania interpolowane
+
 out vec4 pixelColor; //Zmienna wyjsciowa fragment shadera. Zapisuje sie do niej ostateczny (prawie) kolor piksela
+uniform sampler2D textureMap0;
 
 void main(void) {
-	pixelColor=vec4(0,0.5,1,1); //Zapisz jako kolor piksela, kolor bialy
+	vec4 texColor = texture(textureMap0,iuvs);
+	
+	pixelColor = vec4(texColor.rgb,texColor.a);
 }

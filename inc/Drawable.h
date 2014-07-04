@@ -17,6 +17,7 @@
 #include "glm/gtc/type_ptr.hpp"
 
 #include "Exception.h"
+#include "tga.h"
 #include "vboindexer.hpp"
 #include "objloader.hpp"
 
@@ -54,7 +55,7 @@ class Drawable{
 		Drawable& loadShaders(const char * vertex_file_path,const char * fragment_file_path);
 		GLuint getShaderProgram();
 		Drawable& draw(const glm::mat4& v, const glm::mat4& p);
-		Drawable& loadTexture(const char* path);
+		Drawable& loadTexture(const char* filename);
 };
 
 #endif

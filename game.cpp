@@ -12,9 +12,8 @@ using namespace std;
 //Ustawienia okna i rzutowania
 int windowPositionX = 100;
 int windowPositionY = 100;
-int windowWidth = 800;
-int windowHeight = 600;
-float cameraAngle=0.785f;
+float windowWidth = 800.0f;
+float windowHeight = 600.0f;
 Drawable *d;
 
 //Procedura wywoływana przy zmianie rozmiaru okna
@@ -38,7 +37,7 @@ void displayFrame() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	//Wylicz macierz rzutowania
-	glm::mat4 p = glm::perspective(1.0f, 800.0f/600.0f, 1.0f, 100.0f);
+	glm::mat4 p = glm::perspective(1.0f, windowWidth/windowHeight, 1.0f, 100.0f);
 	//Wylicz macierz widoku
 	glm::mat4 v = glm::lookAt(glm::vec3(0.0f,0.0f,7.0f),glm::vec3(0.0f,0.0f,0.0f),glm::vec3(0.0f,1.0f,0.0f)); 
 	
@@ -48,18 +47,18 @@ void displayFrame() {
 	glutSwapBuffers();
 }
 
-//Procedura inicjujšca biblotekę glut
+//Procedura inicjująca biblotekę glut
 void initGLUT(int *argc, char** argv) {
 	glutInit(argc,argv); //Zainicjuj bibliotekę GLUT
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH); //Alokuj bufory kolorów (podwójne buforowanie) i bufor kolorów
 	
 	glutInitWindowPosition(windowPositionX,windowPositionY); //Wskaż początkową pozycję okna
 	glutInitWindowSize(windowWidth,windowHeight); //Wskaż początkowy rozmiar okna
-	glutCreateWindow("OpenGL 3.3"); //Utwórz okno i nadaj mu tytuł
+	glutCreateWindow("Arkanoid 3D"); //Utwórz okno i nadaj mu tytuł
 	
-	glutReshapeFunc(changeSize); //Zarejestruj procedurę changeSize jako procedurę obsługujšca zmianę rozmiaru okna
-	glutDisplayFunc(displayFrame); //Zarejestruj procedurę displayFrame jako procedurę obsługujšca odświerzanie okna
-	glutIdleFunc(nextFrame); //Zarejestruj procedurę nextFrame jako procedurę wywoływanš najczęcięj jak się da (animacja)
+	glutReshapeFunc(changeSize); //Zarejestruj procedurę changeSize jako procedurę obsługującą zmianę rozmiaru okna
+	glutDisplayFunc(displayFrame); //Zarejestruj procedurę displayFrame jako procedurę obsługująca odświerzanie okna
+	glutIdleFunc(nextFrame); //Zarejestruj procedurę nextFrame jako procedurę wywoływanš najczęścięj jak się da (animacja)
 }
 
 int main(int argc, char** argv)
@@ -75,13 +74,13 @@ int main(int argc, char** argv)
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
-	// Cull triangles which normal is not towards the camera
 	glEnable(GL_CULL_FACE);
 	
 	//////////// Ładowanie do pamięci karty //////////////////////
 	d = new Drawable();
 	d->loadShaders("shaders/vertex/bat.txt", "shaders/fragment/bat.txt");
-	d->loadObj("models/cube.obj");	
+	d->loadObj("models/cube.obj");
+	d->loadTexture("textures/metal.tga");
 	/////////////////////////////////////////////////////////////
 	glutMainLoop();
 		
