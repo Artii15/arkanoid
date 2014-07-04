@@ -8,10 +8,12 @@ Drawable::Drawable(){
 	this->shaders_loaded = false;
 
 	this->shader_program = 0;
-	this->model_matrix = new glm::mat4(1.0f);
+	this->model_matrix = glm::mat4(1.0f);
 	
 	// Tworzenie VAO
 	glGenVertexArrays(1, &(this->vao) );
+	this->time = glutGet(GLUT_ELAPSED_TIME);
+	this->texture = 0;
 }
 
 Drawable::~Drawable(){
@@ -22,7 +24,6 @@ Drawable::~Drawable(){
 	if( this->shader_program != 0 ){
 		glDeleteProgram( this->shader_program );
 	}
-	delete this->model_matrix;
 	
 	// Usuwanie VBO
 	for (unsigned int i=0; i<VBOs.size(); i++){
@@ -167,17 +168,6 @@ GLuint Drawable::getShaderProgram(){
 	return this->shader_program;
 }
 
-const glm::mat4* Drawable::getModelMatrix(){
-	return this->model_matrix;
-}
-
-Drawable& Drawable::setModelMatrix( glm::mat4* matrix ){
-	delete this->model_matrix;
-	this->model_matrix = matrix;	
-	
-	return *(this);
-}
-
 Drawable& Drawable::loadObj(const char *path){
 	
 	if( !this->shaders_loaded ){
@@ -225,10 +215,16 @@ const std::vector< unsigned short >* Drawable::getIndices(){
 	return this->indices;
 }
 
-Drawable& Drawable::draw(glm::mat4& v, glm::mat4& p){
+Drawable& Drawable::draw(const glm::mat4& v, const glm::mat4& p){
+	double cur_time = glutGet(GLUT_ELAPSED_TIME);
+	float dt = (cur_time - this->time)/1000.f;
+	this->time = cur_time;
+	
+	this->model_matrix = glm::rotate(this->model_matrix, 3.0f*dt, glm::vec3(0.5f, 1.0f, 0.5f));
+	
 	glUseProgram(this->shader_program);
 	
-	glm::mat4 MVP = p * v * (*(this->model_matrix));
+	glm::mat4 MVP = p * v * this->model_matrix;
 
 	glUniformMatrix4fv(glGetUniformLocation(this->shader_program, "MVP"), 1, GL_FALSE, &MVP[0][0]);
 	
@@ -269,6 +265,11 @@ Drawable& Drawable::assignVBOtoAttribute(const char* attributeName, GLuint bufVB
 	glBindBuffer(GL_ARRAY_BUFFER,bufVBO);  //Uaktywnij uchwyt VBO 
 	glEnableVertexAttribArray(location); //Włącz używanie atrybutu o numerze slotu zapisanym w zmiennej location
 	glVertexAttribPointer(location,variableSize,GL_FLOAT, GL_FALSE, 0, NULL); //Dane do slotu location mają być brane z aktywnego VBO
+	
+	return *(this);
+}
+
+Drawable& Drawable::loadTexture(const char* path){
 	
 	return *(this);
 }

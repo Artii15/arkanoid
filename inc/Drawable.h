@@ -10,7 +10,7 @@
 #include <iostream>
 #include <stdlib.h>
 #include <string.h>
-#include <GLFW/glfw3.h>
+#include <GL/freeglut.h>
 #define GLM_FORCE_RADIANS
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
@@ -38,10 +38,12 @@ class Drawable{
 		std::vector< glm::vec4 > *normals;
 		std::vector< unsigned short > *indices;
 		GLuint shader_program;
-		glm::mat4 *model_matrix;
+		glm::mat4 model_matrix;
 		GLuint vao;
 		std::vector< GLuint > VBOs;
 		bool shaders_loaded;
+		double time; // Tymczasowe, wywalić po testach animacji
+		GLuint texture;
 	
 	public:
 		Drawable();
@@ -51,9 +53,8 @@ class Drawable{
 		Drawable& loadObj(const char *path);
 		Drawable& loadShaders(const char * vertex_file_path,const char * fragment_file_path);
 		GLuint getShaderProgram();
-		const glm::mat4* getModelMatrix();
-		Drawable& setModelMatrix( glm::mat4* matrix );
-		Drawable& draw(glm::mat4& v, glm::mat4& p);
+		Drawable& draw(const glm::mat4& v, const glm::mat4& p);
+		Drawable& loadTexture(const char* path);
 };
 
 #endif

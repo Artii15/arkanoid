@@ -9,33 +9,62 @@
 
 using namespace std;
 
-static void error_callback(int error, const char* description){
-	fputs(description, stderr);
-}
-static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods){
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS){
-		glfwSetWindowShouldClose(window, GL_TRUE);
-	}
+//Ustawienia okna i rzutowania
+int windowPositionX = 100;
+int windowPositionY = 100;
+int windowWidth = 800;
+int windowHeight = 600;
+float cameraAngle=0.785f;
+Drawable *d;
+
+//Procedura wywoływana przy zmianie rozmiaru okna
+void changeSize(int w, int h) {
+	//Ustawienie wymiarow przestrzeni okna
+	glViewport(0,0,w,h);
+	//Zapamiętanie nowych wymiarów okna dla poprawnego wyliczania macierzy rzutowania
+	windowWidth=w;
+	windowHeight=h;
 }
 
-int main(void)
+//Procedura uruchamiana okresowo. Robi animację.
+void nextFrame(void) {
+	glutPostRedisplay();
+}
+
+//Procedura rysująca
+void displayFrame() {
+	//Wyczyść bufor kolorów i bufor głębokości
+	glClearColor(0,0,0,1);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	//Wylicz macierz rzutowania
+	glm::mat4 p = glm::perspective(1.0f, 800.0f/600.0f, 1.0f, 100.0f);
+	//Wylicz macierz widoku
+	glm::mat4 v = glm::lookAt(glm::vec3(0.0f,0.0f,7.0f),glm::vec3(0.0f,0.0f,0.0f),glm::vec3(0.0f,1.0f,0.0f)); 
+	
+	d->draw(v, p);
+	
+	//Tylny bufor na przedni
+	glutSwapBuffers();
+}
+
+//Procedura inicjujšca biblotekę glut
+void initGLUT(int *argc, char** argv) {
+	glutInit(argc,argv); //Zainicjuj bibliotekę GLUT
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH); //Alokuj bufory kolorów (podwójne buforowanie) i bufor kolorów
+	
+	glutInitWindowPosition(windowPositionX,windowPositionY); //Wskaż początkową pozycję okna
+	glutInitWindowSize(windowWidth,windowHeight); //Wskaż początkowy rozmiar okna
+	glutCreateWindow("OpenGL 3.3"); //Utwórz okno i nadaj mu tytuł
+	
+	glutReshapeFunc(changeSize); //Zarejestruj procedurę changeSize jako procedurę obsługujšca zmianę rozmiaru okna
+	glutDisplayFunc(displayFrame); //Zarejestruj procedurę displayFrame jako procedurę obsługujšca odświerzanie okna
+	glutIdleFunc(nextFrame); //Zarejestruj procedurę nextFrame jako procedurę wywoływanš najczęcięj jak się da (animacja)
+}
+
+int main(int argc, char** argv)
 {
-	GLFWwindow* window;
-	glfwSetErrorCallback(error_callback);
-	
-	if (!glfwInit()){
-		exit(EXIT_FAILURE);
-	
-	}
-	
-	window = glfwCreateWindow(800, 600, "Arkanoid 3D", NULL, NULL);
-	if (!window){
-		glfwTerminate();
-		exit(EXIT_FAILURE);
-	}
-		
-	glfwMakeContextCurrent(window);
-	glfwSetKeyCallback(window, key_callback);
+	initGLUT(&argc,argv);
 	
 	// Initialize GLEW
 	if (glewInit() != GLEW_OK) {
@@ -50,27 +79,13 @@ int main(void)
 	glEnable(GL_CULL_FACE);
 	
 	//////////// Ładowanie do pamięci karty //////////////////////
-	Drawable *d = new Drawable();
+	d = new Drawable();
 	d->loadShaders("shaders/vertex/bat.txt", "shaders/fragment/bat.txt");
 	d->loadObj("models/cube.obj");	
 	/////////////////////////////////////////////////////////////
-	
-	while (!glfwWindowShouldClose(window)){
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		//Wylicz macierz rzutowania
-		glm::mat4 p = glm::perspective(1.0f, 800.0f/600.0f, 1.0f, 100.0f);
-		//Wylicz macierz widoku
-		glm::mat4 v = glm::lookAt(glm::vec3(0.0f,0.0f,7.0f),glm::vec3(0.0f,0.0f,0.0f),glm::vec3(0.0f,1.0f,0.0f)); 
+	glutMainLoop();
 		
-		d->draw(v, p);
-		
-		glfwSwapBuffers(window);
-		glfwPollEvents();
-	}
 	delete d;
-	
-	glfwDestroyWindow(window);
-	glfwTerminate();
 	
 	return 0;
 }
