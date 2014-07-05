@@ -4,16 +4,27 @@
 uniform mat4 MVP;
 uniform mat4 V;
 uniform mat4 M;
-
+uniform mat4 P;
+uniform mat4 G;
+uniform vec4 lightPosition;
 
 //Atrybuty
-in vec4 vertex; //wspolrzedne wierzcholka w przestrzeni modelu
-in vec2 uvs;  //kolor wierzcholka (na razie ignorowany)
-in vec4 normal; //wektor normalny w wierzcholku (na razie ignorowany)
+in vec4 vertex; 
+in vec2 uvs;  
+in vec4 normal; 
 
-out vec2 iuvs; // Współrzędne tekstur do interpolacji 
+out vec2 iTexCoord; // Współrzędne tekstur do interpolacji 
+out vec4 l;
+out vec4 n;
+out vec4 v;
+
 
 void main(void) {
-	gl_Position=MVP*vertex;
-	iuvs = uvs;
+	gl_Position = MVP*vertex;
+	
+	l = normalize(V*(lightPosition-M*vertex)); // Wektor do światła 
+	n = normalize(V*M*normal); // Wektor normalny
+	v = normalize( vec4(0,0,0,1)-V*M*vertex ); // Wektor do obserwatora
+	
+	iTexCoord = uvs;
 }
