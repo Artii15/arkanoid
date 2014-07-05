@@ -23,7 +23,7 @@ void main(void) {
 	gl_Position = MVP*vertex;
 	
 	l = normalize(V*(lightPosition-M*vertex)); // Wektor do światła 
-	n = normalize(V*M*normal); // Wektor normalny
+	n = normalize(V*G*normal); // Wektor normalny
 	v = normalize( vec4(0,0,0,1)-V*M*vertex ); // Wektor do obserwatora
 	
 	iTexCoord = uvs;

@@ -19,7 +19,7 @@ void main(void) {
 
 	vec4 Ls=vec4(1,1,1,1); //Kolor swiatla odbijanego
 	vec4 Ms=texture(textureMap0,iTexCoord); //Kolor materialu dla swiatla odbijanego
-	float shininess=10; //Polyskliwosc materialu
+	float shininess=30; //Polyskliwosc materialu
 
 	//Wektory potrzebne do obliczenia modelu oswietlenia
 	vec4 ml=normalize(l);

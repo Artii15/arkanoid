@@ -107,7 +107,7 @@ bool loadOBJ(
 		for(unsigned int j = 0; j<3; j++){
 			normal[j] = temp_normals[ normalIndex-1 ][j];
 		}
-		normal[3] = 1;
+		normal[3] = 0;
 		
 		// Put the attributes in buffers
 		out_vertices.push_back(vertex);
