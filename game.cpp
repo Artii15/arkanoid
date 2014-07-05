@@ -80,7 +80,7 @@ int main(int argc, char** argv)
 	d = new Drawable();
 	d->loadShaders("shaders/vertex/bat.txt", "shaders/fragment/bat.txt");
 	d->loadObj("models/cube.obj");
-	d->loadTexture("textures/t2.tga");
+	d->loadTexture("textures/metal.tga");
 	/////////////////////////////////////////////////////////////
 	glutMainLoop();
 		
