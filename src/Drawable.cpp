@@ -225,7 +225,7 @@ Drawable& Drawable::draw(const glm::mat4& v, const glm::mat4& p){
 	float dt = (cur_time - this->time)/1000.f;
 	this->time = cur_time;
 	
-	this->model_matrix = glm::rotate(this->model_matrix, 3.0f*dt, glm::vec3(0.5f, 1.0f, 0.5f));
+	this->model_matrix = glm::rotate(this->model_matrix, 3.0f*dt, glm::vec3(0.6f, 1.0f, 0.4f));
 	// Żeby uprościć obliczenia vertex shadera
 	glm::mat4 g = glm::mat4(glm::transpose(glm::inverse(glm::mat3(v*this->model_matrix))));
 	
