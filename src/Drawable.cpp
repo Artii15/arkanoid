@@ -206,7 +206,7 @@ Drawable& Drawable::loadObj(const char *path){
 	glBindVertexArray(this->vao);
 	
 	this->assignVBOtoAttribute("vertex", v_buf, 4);
-	this->assignVBOtoAttribute("uvs", uv_buf, 2);
+	this->assignVBOtoAttribute("texCoord", uv_buf, 2);
 	this->assignVBOtoAttribute("normals", n_buf, 4);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, i_buf);
 	
@@ -225,7 +225,7 @@ Drawable& Drawable::draw(const glm::mat4& v, const glm::mat4& p){
 	this->time = cur_time;
 	
 	this->model_matrix = glm::rotate(this->model_matrix, 3.0f*dt, glm::vec3(0.5f, 1.0f, 0.5f));
-	// Żeby uprościć obliczenia fragment shadera
+	// Żeby uprościć obliczenia vertex shadera
 	glm::mat4 g = glm::mat4(glm::transpose(glm::inverse(glm::mat3(this->model_matrix))));
 	
 	glUseProgram(this->shader_program);
@@ -238,7 +238,7 @@ Drawable& Drawable::draw(const glm::mat4& v, const glm::mat4& p){
 	glUniformMatrix4fv(glGetUniformLocation(this->shader_program, "P"), 1, GL_FALSE, &p[0][0]);
 	glUniformMatrix4fv(glGetUniformLocation(this->shader_program, "G"), 1, GL_FALSE, &g[0][0]);
 	glUniformMatrix4fv(glGetUniformLocation(this->shader_program, "M"), 1, GL_FALSE, &(this->model_matrix[0][0]));
-	glUniform4f( glGetUniformLocation(this->shader_program, "lightPosition"),0,0,8,1); // Na razie na sztywno, później normalnie przekazywać wektor
+	glUniform4f( glGetUniformLocation(this->shader_program, "lightPosition"),0,0,10,1); // Na razie na sztywno, później normalnie przekazywać wektor
 	glUniform1i( glGetUniformLocation(this->shader_program, "textureMap0"), 0 );
 	
 	//Uaktywnienie VAO i tym samym uaktywnienie predefiniowanych w tym VAO powiązań slotów atrybutów z tablicami z danymi

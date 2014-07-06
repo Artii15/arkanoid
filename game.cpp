@@ -37,9 +37,9 @@ void displayFrame() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	//Wylicz macierz rzutowania
-	glm::mat4 p = glm::perspective(1.0f, windowWidth/windowHeight, 1.0f, 100.0f);
+	glm::mat4 p = glm::perspective(0.785f, windowWidth/windowHeight, 1.0f, 100.0f);
 	//Wylicz macierz widoku
-	glm::mat4 v = glm::lookAt(glm::vec3(0.0f,0.0f,7.0f),glm::vec3(0.0f,0.0f,0.0f),glm::vec3(0.0f,1.0f,0.0f)); 
+	glm::mat4 v = glm::lookAt(glm::vec3(0.0f,0.0f,10.0f),glm::vec3(0.0f,0.0f,0.0f),glm::vec3(0.0f,1.0f,0.0f)); 
 	
 	d->draw(v, p);
 	
@@ -80,7 +80,7 @@ int main(int argc, char** argv)
 	d = new Drawable();
 	d->loadShaders("shaders/vertex/bat.txt", "shaders/fragment/bat.txt");
 	d->loadObj("models/cube.obj");
-	d->loadTexture("textures/metal.tga");
+	d->loadTexture("textures/t2.tga");
 	/////////////////////////////////////////////////////////////
 	glutMainLoop();
 		
