@@ -205,9 +205,9 @@ Drawable& Drawable::loadObj(const char *path){
 	
 	glBindVertexArray(this->vao);
 	
+	this->assignVBOtoAttribute("normal", n_buf, 4);
 	this->assignVBOtoAttribute("vertex", v_buf, 4);
 	this->assignVBOtoAttribute("texCoord", uv_buf, 2);
-	this->assignVBOtoAttribute("normals", n_buf, 4);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, i_buf);
 	
 	glBindVertexArray(0);
@@ -220,13 +220,15 @@ const std::vector< unsigned short >* Drawable::getIndices(){
 }
 
 Drawable& Drawable::draw(const glm::mat4& v, const glm::mat4& p){
-	double cur_time = glutGet(GLUT_ELAPSED_TIME);
+
+	/*double cur_time = glutGet(GLUT_ELAPSED_TIME);
 	float dt = (cur_time - this->time)/1000.f;
 	this->time = cur_time;
 	
-	this->model_matrix = glm::rotate(this->model_matrix, 3.0f*dt, glm::vec3(0.5f, 1.0f, 0.5f));
+	this->model_matrix = glm::rotate(this->model_matrix, 3.0f*dt, glm::vec3(0.5f, 1.0f, 0.5f));*/
+	this->model_matrix = glm::rotate(glm::mat4(1.0f), 0.785f, glm::vec3(0.5f, 1.0f, 0.5f));
 	// Żeby uprościć obliczenia vertex shadera
-	glm::mat4 g = glm::mat4(glm::transpose(glm::inverse(glm::mat3(this->model_matrix))));
+	glm::mat4 g = glm::mat4(glm::transpose(glm::inverse(glm::mat3(v*this->model_matrix))));
 	
 	glUseProgram(this->shader_program);
 	
@@ -241,15 +243,11 @@ Drawable& Drawable::draw(const glm::mat4& v, const glm::mat4& p){
 	glUniform4f( glGetUniformLocation(this->shader_program, "lightPosition"),0,0,10,1); // Na razie na sztywno, później normalnie przekazywać wektor
 	glUniform1i( glGetUniformLocation(this->shader_program, "textureMap0"), 0 );
 	
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D,this->texture);
+	
 	//Uaktywnienie VAO i tym samym uaktywnienie predefiniowanych w tym VAO powiązań slotów atrybutów z tablicami z danymi
 	glBindVertexArray(this->vao);
-	
-	if(this->texture){
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D,this->texture);
-	}
-	
-	
 	//Narysowanie obiektu
 	glDrawElements(GL_TRIANGLES, this->indices->size() ,GL_UNSIGNED_SHORT, NULL); 
 	glBindVertexArray(0);	

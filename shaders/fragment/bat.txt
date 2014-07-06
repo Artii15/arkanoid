@@ -14,14 +14,14 @@ uniform mat4 V;
 
 void main(void) {
 	vec4 materialColor = texture(textureMap0, iTexCoord);
-	vec4 fPosition = V*M*iVertex;
 	
-	vec4 l = normalize(vec4(0,0,-10,1)-fPosition);
-	vec4 n = normalize(V*G*iNormal);
+	vec4 l = normalize(V*(vec4(0,0,10,1)-M*iVertex));
+	vec4 n = normalize(G*iNormal);
 	// Światło rozproszone
 	float nlCos = max(0.0, dot(n, l));
 	vec3 diffuse = nlCos*materialColor.rgb*vec3(1,1,1);
+
+	pixelColor.rgb = diffuse;
 	
-	pixelColor.rgb = diffuse.rgb;
 	pixelColor.a = 1;
 }
