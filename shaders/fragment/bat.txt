@@ -1,25 +1,28 @@
 #version 130
 
 in vec2 iTexCoord; // Współrzędne teksturowania interpolowane
-in vec4 iNormal;
-in vec4 iVertex;
+
+in vec4 iN;
+in vec4 iV;
+in vec4 iL;
 
 out vec4 pixelColor; //Zmienna wyjsciowa fragment shadera. Zapisuje sie do niej ostateczny (prawie) kolor piksela
 
 uniform sampler2D textureMap0;
-uniform vec4 lightPosition;
-uniform mat4 M;
-uniform mat4 G;
-uniform mat4 V;
 
 void main(void) {
 	vec4 materialColor = texture(textureMap0, iTexCoord);
 	
-	vec4 l = normalize(V*(vec4(0,0,10,1)-M*iVertex));
-	vec4 n = normalize(G*iNormal);
-	// Światło rozproszone
-	float nlCos = max(0.0, dot(n, l));
-	vec3 diffuse = nlCos*materialColor.rgb*vec3(1,1,1);
+	vec4 l = normalize(iL);
+	vec4 v = normalize(iV);
+	vec4 n = normalize(iN);
+	vec4 r = reflect(-l, n);
+
+	// Cosinus kąta między wektorem normalnym, a promieniem światła
+	float cosNL = max(dot(n, l), 0); // Dzięki normalizacji, bez dzielenia przez długości wektorów
+	
+	// Składowa światła rozproszonego
+	vec3 diffuse = cosNL*materialColor.rgb*vec3(1,1,1); // Na razie na sztywno kolor światła rozpraszanego
 
 	pixelColor.rgb = diffuse;
 	

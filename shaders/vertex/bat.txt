@@ -2,6 +2,10 @@
 
 //Zmienne jednorodne
 uniform mat4 MVP;
+uniform mat4 G;
+uniform mat4 V;
+uniform mat4 M;
+uniform vec4 lightPosition;
 
 //Atrybuty
 in vec4 vertex; 
@@ -9,14 +13,18 @@ in vec2 texCoord;
 in vec4 normal; 
 
 out vec2 iTexCoord; // Współrzędne tekstur do interpolacji 
-out vec4 iVertex;
-out vec4 iNormal;
-
+out vec4 iN;
+out vec4 iL;
+out vec4 iV;
 
 void main(void) {
-	iVertex = vertex;
-	iNormal = normal;
-	iTexCoord = texCoord;
+	iTexCoord = texCoord; // Współrzędne teksturowania
+	vec4 worldPosition = M*vertex;
 	
+	// Poniższe interpolowane wektory są w przestrzeni oka
+	iN = normalize( G*normal); // Wektor normalny
+	iL = normalize( V*(lightPosition - worldPosition) ); // Wektor do światła
+	iV = normalize( vec4(0,0,0,1) - V*worldPosition ); // Wektor do obserwatora
+		
 	gl_Position = MVP*vertex;
 }
