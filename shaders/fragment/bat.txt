@@ -5,6 +5,7 @@ in vec2 iTexCoord; // Współrzędne teksturowania interpolowane
 in vec4 iN;
 in vec4 iV;
 in vec4 iL;
+in float iDist;
 
 out vec4 pixelColor; //Zmienna wyjsciowa fragment shadera. Zapisuje sie do niej ostateczny (prawie) kolor piksela
 
@@ -22,9 +23,24 @@ void main(void) {
 	float cosNL = max(dot(n, l), 0); // Dzięki normalizacji, bez dzielenia przez długości wektorów
 	
 	// Składowa światła rozproszonego
-	vec3 diffuse = cosNL*materialColor.rgb*vec3(1,1,1); // Na razie na sztywno kolor światła rozpraszanego
-
-	pixelColor.rgb = diffuse;
+	vec3 diffuse = cosNL*materialColor.rgb*vec3(1,1,1); // Na razie na sztywno kolor światła rozpraszanego, wszystkie "sztywne światła" deklarować jako uniformy
+	
+	// Światło otoczenia
+	vec3 ambientColor = vec3(1,1,1);
+	vec3 ambientMaterial = vec3(0,0,0);
+	vec3 ambient = ambientColor*ambientMaterial;
+	
+	//Światło odbite
+	float shininess = 80;
+	float rv = pow(max(dot(r,v),0), shininess);
+	vec3 reflectedColor = vec3(1,1,1); // Również przenieść do uniformu
+	vec4 materialReflected = materialColor; // Może jakaś tekstura ?
+	vec3 specular = rv * materialReflected.rgb * reflectedColor;
+	
+	// Osłabianie światła wraz z odległością
+	float attenuation = 1.0 / (1.0 + 0.05 * pow(iDist, 2)); // Współczynnik osłabienia (0.05) powinien być w uniformie
+	
+	pixelColor.rgb = ambient + attenuation*(diffuse + specular);
 	
 	pixelColor.a = 1;
 }
