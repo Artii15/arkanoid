@@ -20,6 +20,8 @@
 #include "tga.h"
 #include "vboindexer.hpp"
 #include "objloader.hpp"
+#include "materials_samplers.h"
+#include "textures.h"
 
 class Drawable{
 	
@@ -28,6 +30,7 @@ class Drawable{
 		void deleteUVs();
 		void deleteNormals();
 		void deleteIndices();
+		void deleteTextures();
 		
 	protected:			
 		GLuint makeBuffer(void *data, int vertexCount, int vertexSize);
@@ -44,7 +47,11 @@ class Drawable{
 		std::vector< GLuint > VBOs;
 		bool shaders_loaded;
 		double time; // Tymczasowe, wywalić po testach animacji
-		GLuint texture;
+		struct textures textures;
+		struct materials_samplers samplers;
+		GLuint loadTexture(const char* filename, GLuint sampler_nr);
+		Drawable& activateTextures();
+		Drawable& setTextureUniforms();
 	
 	public:
 		Drawable();
@@ -55,7 +62,14 @@ class Drawable{
 		Drawable& loadShaders(const char * vertex_file_path,const char * fragment_file_path);
 		GLuint getShaderProgram();
 		Drawable& draw(const glm::mat4& v, const glm::mat4& p);
-		Drawable& loadTexture(const char* filename);
+		Drawable& setAmbientTexture(const char* filename);
+		Drawable& setSpecularTexture(const char* filename);
+		Drawable& setDiffuseTexture(const char* filename);
+		Drawable& setAmbientTexture(GLuint tex, GLuint sampler_nr);
+		Drawable& setSpecularTexture(GLuint tex, GLuint sampler_nr);
+		Drawable& setDiffuseTexture(GLuint tex, GLuint sampler_nr);
+		const struct textures& getTextures();
+		const struct materials_samplers& getSamplers();
 };
 
 #endif

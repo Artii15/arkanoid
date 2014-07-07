@@ -2,17 +2,25 @@
 
 in vec2 iTexCoord; // Współrzędne teksturowania interpolowane
 
+// Wektory
 in vec4 iN;
 in vec4 iV;
 in vec4 iL;
+
+// Odległość od światła
 in float iDist;
 
 out vec4 pixelColor; //Zmienna wyjsciowa fragment shadera. Zapisuje sie do niej ostateczny (prawie) kolor piksela
 
-uniform sampler2D textureMap0;
+// Jednostki teksturujące
+uniform sampler2D ambientSamp;
+uniform sampler2D diffuseSamp;
+uniform sampler2D specularSamp;
 
 void main(void) {
-	vec4 materialColor = texture(textureMap0, iTexCoord);
+	vec4 Md = texture(diffuseSamp, iTexCoord);
+	vec4 Ma = texture(ambientSamp, iTexCoord);
+	vec4 Ms = texture(specularSamp, iTexCoord);
 	
 	vec4 l = normalize(iL);
 	vec4 v = normalize(iV);
@@ -20,22 +28,20 @@ void main(void) {
 	vec4 r = reflect(-l, n);
 
 	// Cosinus kąta między wektorem normalnym, a promieniem światła
-	float cosNL = max(dot(n, l), 0); // Dzięki normalizacji, bez dzielenia przez długości wektorów
+	float nl = max(dot(n, l), 0); // Dzięki normalizacji, bez dzielenia przez długości wektorów
 	
 	// Składowa światła rozproszonego
-	vec3 diffuse = vec3(1,1,1)*materialColor.rgb*vec3(cosNL,cosNL,cosNL); // Na razie na sztywno kolor światła rozpraszanego, wszystkie "sztywne światła" deklarować jako uniformy
+	vec3 diffuse = vec3(1,1,1)*Md.rgb*vec3(nl,nl,nl); // Na razie na sztywno kolor światła rozpraszanego, wszystkie "sztywne światła" deklarować jako uniformy
 	
 	// Światło otoczenia
-	vec3 ambientColor = vec3(1,1,1);
-	vec3 ambientMaterial = vec3(0,0,0);
-	vec3 ambient = ambientColor*ambientMaterial;
+	vec3 ambientColor = vec3(0,0,0);
+	vec3 ambient = ambientColor*Ma.rgb;
 	
 	//Światło odbite
 	float shininess = 50;
 	float rv = pow(max(dot(r, v),0),shininess);
 	vec3 reflectedColor = vec3(1,1,1); // Również przenieść do uniformu
-	vec4 materialReflected = vec4(1,1,1,0); // Może jakaś tekstura ?
-	vec3 specular = reflectedColor*materialReflected.rgb*vec3(rv,rv,rv);
+	vec3 specular = reflectedColor*Ms.rgb*vec3(rv,rv,rv);
 	
 	// Osłabianie światła wraz z odległością
 	float attenuation = 1.0 / (1.0 + 0.05 * pow(iDist, 2)); // Współczynnik osłabienia (0.05) powinien być w uniformie

@@ -80,7 +80,9 @@ int main(int argc, char** argv)
 	d = new Drawable();
 	d->loadShaders("shaders/vertex/bat.txt", "shaders/fragment/bat.txt");
 	d->loadObj("models/cube.obj");
-	d->loadTexture("textures/t2.tga");
+	d->setDiffuseTexture("textures/t2.tga");
+	d->setAmbientTexture(d->getTextures().diffuse, d->getSamplers().diffuse);
+	d->setSpecularTexture(d->getTextures().diffuse, d->getSamplers().diffuse);
 	/////////////////////////////////////////////////////////////
 	glutMainLoop();
 		

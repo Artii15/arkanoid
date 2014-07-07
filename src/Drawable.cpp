@@ -13,7 +13,6 @@ Drawable::Drawable(){
 	// Tworzenie VAO
 	glGenVertexArrays(1, &(this->vao) );
 	this->time = glutGet(GLUT_ELAPSED_TIME);
-	this->texture = 0;
 }
 
 Drawable::~Drawable(){
@@ -34,8 +33,21 @@ Drawable::~Drawable(){
 	//Wykasuj program shaderów
 	glDeleteProgram(this->shader_program);
 	// Zwalnianie pamięci po teksturach
-	if( this->texture != 0 ){
-		glDeleteTextures(1, &(this->texture));
+	this->deleteTextures();
+}
+
+void Drawable::deleteTextures(){
+	if(this->textures.diffuse != 0){
+		glDeleteTextures(1, &(this->textures.diffuse));
+		this->textures.diffuse = 0;
+	}
+	if(this->textures.ambient != 0){
+		glDeleteTextures(1, &(this->textures.ambient));
+		this->textures.ambient = 0;
+	}
+	if(this->textures.specular != 0){
+		glDeleteTextures(1, &(this->textures.specular));
+		this->textures.specular = 0;
 	}
 }
 
@@ -240,10 +252,9 @@ Drawable& Drawable::draw(const glm::mat4& v, const glm::mat4& p){
 	glUniformMatrix4fv(glGetUniformLocation(this->shader_program, "G"), 1, GL_FALSE, &g[0][0]);
 	glUniformMatrix4fv(glGetUniformLocation(this->shader_program, "M"), 1, GL_FALSE, &(this->model_matrix[0][0]));
 	glUniform4f( glGetUniformLocation(this->shader_program, "lightPosition"),0,0,5,1); // Na razie na sztywno, później normalnie przekazywać wektor
-	glUniform1i( glGetUniformLocation(this->shader_program, "textureMap0"), 0 );
+	this->setTextureUniforms();
 	
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D,this->texture);
+	this->activateTextures(); // Przypisywanie tekstur do jednostek teksturujących
 	
 	//Uaktywnienie VAO i tym samym uaktywnienie predefiniowanych w tym VAO powiązań slotów atrybutów z tablicami z danymi
 	glBindVertexArray(this->vao);
@@ -251,6 +262,33 @@ Drawable& Drawable::draw(const glm::mat4& v, const glm::mat4& p){
 	glDrawElements(GL_TRIANGLES, this->indices->size() ,GL_UNSIGNED_SHORT, NULL); 
 	glBindVertexArray(0);	
 	
+	return *(this);
+}
+
+Drawable& Drawable::setTextureUniforms(){
+	glUniform1i(glGetUniformLocation(this->shader_program, "diffuseSamp"), this->samplers.diffuse);
+	glUniform1i(glGetUniformLocation(this->shader_program, "ambientSamp"), this->samplers.ambient);	
+	glUniform1i(glGetUniformLocation(this->shader_program, "specularSamp"), this->samplers.specular);
+
+	return *(this);
+}
+
+Drawable& Drawable::activateTextures(){
+	// Tekstura dla materiału do światła rozpraszanego
+	if(this->textures.diffuse){
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D,this->textures.diffuse);
+	}
+	// Tekstura dla materiału do światła odbitego
+	if(this->textures.specular){
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D,this->textures.specular);
+	}
+	// Tekstura dla materiału do światła otoczenia
+	if(this->textures.ambient){
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D,this->textures.ambient);	
+	}
 	return *(this);
 }
 
@@ -284,10 +322,10 @@ Drawable& Drawable::assignVBOtoAttribute(const char* attributeName, GLuint bufVB
 	return *(this);
 }
 
-Drawable& Drawable::loadTexture(const char* filename){
+GLuint Drawable::loadTexture(const char* filename, GLuint sampler_nr){
 	GLuint tex;
 	TGAImg img;
-	glActiveTexture(GL_TEXTURE0);
+	glActiveTexture(sampler_nr);
 	if (img.Load(filename)==IMG_OK) {
 		glGenTextures(1,&tex); //Zainicjuj uchwyt tex
 		glBindTexture(GL_TEXTURE_2D,tex); //Przetwarzaj uchwyt tex
@@ -308,7 +346,63 @@ Drawable& Drawable::loadTexture(const char* filename){
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,GL_REPEAT);
 	
-	this->texture = tex;
-	
+	return tex;
+}
+
+Drawable& Drawable::setAmbientTexture(const char* filename){
+	if(this->textures.ambient != 0){
+		glDeleteTextures(1, &(this->textures.ambient));
+	}
+	this->textures.ambient = loadTexture(filename, this->samplers.ambient);
 	return *(this);
+}
+
+Drawable& Drawable::setSpecularTexture(const char* filename){
+	if(this->textures.specular != 0){
+		glDeleteTextures(1, &(this->textures.specular));
+	}
+	this->textures.specular = loadTexture(filename, this->samplers.specular);
+	return *(this);
+}
+
+Drawable& Drawable::setDiffuseTexture(const char* filename){
+	if(this->textures.diffuse != 0){
+		glDeleteTextures(1, &(this->textures.diffuse));
+	}
+	this->textures.diffuse = loadTexture(filename, this->samplers.diffuse);
+	return *(this);
+}
+
+Drawable& Drawable::setAmbientTexture(GLuint tex, GLuint sampler_nr){
+	if(this->textures.ambient != 0){
+		glDeleteTextures(1, &(this->textures.ambient));
+	}
+	this->textures.ambient = tex;
+	this->samplers.ambient = sampler_nr;
+	return *(this);
+}
+
+Drawable& Drawable::setSpecularTexture(GLuint tex, GLuint sampler_nr){
+	if(this->textures.specular != 0){
+		glDeleteTextures(1, &(this->textures.specular));
+	}
+	this->textures.specular = tex;
+	this->samplers.specular = sampler_nr;
+	return *(this);
+}
+
+Drawable& Drawable::setDiffuseTexture(GLuint tex, GLuint sampler_nr){
+	if(this->textures.diffuse != 0){
+		glDeleteTextures(1, &(this->textures.diffuse));
+	}
+	this->textures.diffuse = tex;
+	this->samplers.diffuse = sampler_nr;
+	return *(this);
+}
+
+const struct textures& Drawable::getTextures(){
+	return this->textures;
+}
+const struct materials_samplers& Drawable::getSamplers(){
+	return this->samplers;
 }
