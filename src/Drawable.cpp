@@ -274,21 +274,18 @@ Drawable& Drawable::setTextureUniforms(){
 }
 
 Drawable& Drawable::activateTextures(){
+	if(!this->textures.diffuse || !this->textures.ambient || !this->textures.specular){
+		throw Exception("Nie załadowano wymaganych tekstur");
+	}
 	// Tekstura dla materiału do światła rozpraszanego
-	if(this->textures.diffuse){
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D,this->textures.diffuse);
-	}
+	glActiveTexture(this->samplers.diffuse);
+	glBindTexture(GL_TEXTURE_2D,this->textures.diffuse);
 	// Tekstura dla materiału do światła odbitego
-	if(this->textures.specular){
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D,this->textures.specular);
-	}
+	glActiveTexture(this->samplers.specular);
+	glBindTexture(GL_TEXTURE_2D,this->textures.specular);
 	// Tekstura dla materiału do światła otoczenia
-	if(this->textures.ambient){
-		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D,this->textures.ambient);	
-	}
+	glActiveTexture(this->samplers.ambient);
+	glBindTexture(GL_TEXTURE_2D,this->textures.ambient);
 	return *(this);
 }
 
@@ -329,15 +326,15 @@ GLuint Drawable::loadTexture(const char* filename, GLuint sampler_nr){
 	if (img.Load(filename)==IMG_OK) {
 		glGenTextures(1,&tex); //Zainicjuj uchwyt tex
 		glBindTexture(GL_TEXTURE_2D,tex); //Przetwarzaj uchwyt tex
-	if (img.GetBPP()==24) //Obrazek 24bit
-	 	glTexImage2D(GL_TEXTURE_2D,0,3,img.GetWidth(),img.GetHeight(),0,
-	  	GL_RGB,GL_UNSIGNED_BYTE,img.GetImg());
-	else if (img.GetBPP()==32) //Obrazek 32bit
-	 	glTexImage2D(GL_TEXTURE_2D,0,4,img.GetWidth(),img.GetHeight(),0,
-	  	GL_RGBA,GL_UNSIGNED_BYTE,img.GetImg());     
-	else {
-	  	printf("Nieobsługiwany format obrazka w pliku: %s \n",filename);
-	}
+		if (img.GetBPP()==24) //Obrazek 24bit
+		 	glTexImage2D(GL_TEXTURE_2D,0,3,img.GetWidth(),img.GetHeight(),0,
+		  	GL_RGB,GL_UNSIGNED_BYTE,img.GetImg());
+		else if (img.GetBPP()==32) //Obrazek 32bit
+		 	glTexImage2D(GL_TEXTURE_2D,0,4,img.GetWidth(),img.GetHeight(),0,
+		  	GL_RGBA,GL_UNSIGNED_BYTE,img.GetImg());     
+		else {
+		  	printf("Nieobsługiwany format obrazka w pliku: %s \n",filename);
+		}
 	} else {
 		printf("Błąd przy wczytywaniu pliku: %s\n",filename);
 	}

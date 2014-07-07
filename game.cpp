@@ -82,7 +82,7 @@ int main(int argc, char** argv)
 	d->loadObj("models/cube.obj");
 	d->setDiffuseTexture("textures/t2.tga");
 	d->setAmbientTexture(d->getTextures().diffuse, d->getSamplers().diffuse);
-	d->setSpecularTexture(d->getTextures().diffuse, d->getSamplers().diffuse);
+	d->setSpecularTexture("textures/metal.tga");
 	/////////////////////////////////////////////////////////////
 	glutMainLoop();
 		
