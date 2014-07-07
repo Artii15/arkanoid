@@ -22,6 +22,7 @@
 #include "objloader.hpp"
 #include "materials_samplers.h"
 #include "textures.h"
+#include "light.h"
 
 class Drawable{
 	

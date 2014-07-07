@@ -5,7 +5,7 @@ FLAGS = -g
 all: inc/Drawable.h inc/Exception.h game.cpp $(OBJS)
 	g++ -Wall $(OBJS) game.cpp $(LIBS) -o game $(FLAGS)
 
-obj/Drawable.o: inc/Drawable.h inc/Exception.h src/Drawable.cpp inc/objloader.hpp inc/vboindexer.hpp inc/tga.h inc/textures.h inc/materials_samplers.h
+obj/Drawable.o: inc/Drawable.h inc/Exception.h src/Drawable.cpp inc/objloader.hpp inc/vboindexer.hpp inc/tga.h inc/textures.h inc/materials_samplers.h inc/light.h
 	g++ -c -Wall src/Drawable.cpp -o obj/Drawable.o
 	
 obj/Bat.o: inc/Bat.h inc/Drawable.h src/Bat.cpp
