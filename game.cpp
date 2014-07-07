@@ -6,6 +6,8 @@
 #define GLM_FORCE_RADIANS
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
+#include "inc/light.h"
+#include "inc/Exception.h"
 
 using namespace std;
 
@@ -14,7 +16,19 @@ int windowPositionX = 100;
 int windowPositionY = 100;
 float windowWidth = 800.0f;
 float windowHeight = 600.0f;
+GLuint lights_count = 1;
+struct light *lights;
 Drawable *d;
+
+void initLights(){
+	lights = new struct light[lights_count];
+	lights[0].position[2] = 5;
+}
+
+void clean(){
+	delete d;
+	delete [] lights;
+}
 
 //Procedura wywoływana przy zmianie rozmiaru okna
 void changeSize(int w, int h) {
@@ -41,7 +55,7 @@ void displayFrame() {
 	//Wylicz macierz widoku
 	glm::mat4 v = glm::lookAt(glm::vec3(0.0f,0.0f,4.0f),glm::vec3(0.0f,0.0f,0.0f),glm::vec3(0.0f,1.0f,0.0f)); 
 	
-	d->draw(v, p);
+	d->draw(v, p, lights);
 	
 	//Tylny bufor na przedni
 	glutSwapBuffers();
@@ -87,8 +101,7 @@ int main(int argc, char** argv)
 	d->setSpecularTexture("textures/metal.tga");
 	/////////////////////////////////////////////////////////////
 	glutMainLoop();
-		
-	delete d;
+	clean();
 	
 	return 0;
 }

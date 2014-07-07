@@ -53,6 +53,7 @@ class Drawable{
 		GLuint loadTexture(const char* filename, GLuint sampler_nr);
 		Drawable& activateTextures();
 		Drawable& setTextureUniforms();
+		Drawable& setLightUniforms(const struct light *lights);
 	
 	public:
 		Drawable();
@@ -62,7 +63,7 @@ class Drawable{
 		Drawable& loadObj(const char *path);
 		Drawable& loadShaders(const char * vertex_file_path,const char * fragment_file_path);
 		GLuint getShaderProgram();
-		Drawable& draw(const glm::mat4& v, const glm::mat4& p);
+		Drawable& draw(const glm::mat4& v, const glm::mat4& p, const struct light* lithts);
 		Drawable& setAmbientTexture(const char* filename);
 		Drawable& setSpecularTexture(const char* filename);
 		Drawable& setDiffuseTexture(const char* filename);

@@ -2,7 +2,7 @@ LIBS = -lGL -lglut -lGLEW
 OBJS = obj/Drawable.o obj/Exception.o obj/Bat.o obj/objloader.o obj/vboindexer.o obj/tga.o
 FLAGS = -g
 
-all: inc/Drawable.h inc/Exception.h game.cpp $(OBJS)
+all: inc/light.h inc/Drawable.h inc/Exception.h game.cpp $(OBJS)
 	g++ -Wall $(OBJS) game.cpp $(LIBS) -o game $(FLAGS)
 
 obj/Drawable.o: inc/Drawable.h inc/Exception.h src/Drawable.cpp inc/objloader.hpp inc/vboindexer.hpp inc/tga.h inc/textures.h inc/materials_samplers.h inc/light.h

@@ -231,7 +231,7 @@ const std::vector< unsigned short >* Drawable::getIndices(){
 	return this->indices;
 }
 
-Drawable& Drawable::draw(const glm::mat4& v, const glm::mat4& p){
+Drawable& Drawable::draw(const glm::mat4& v, const glm::mat4& p, const struct light* lights){
 
 	double cur_time = glutGet(GLUT_ELAPSED_TIME);
 	float dt = (cur_time - this->time)/1000.f;
@@ -252,7 +252,7 @@ Drawable& Drawable::draw(const glm::mat4& v, const glm::mat4& p){
 	glUniformMatrix4fv(glGetUniformLocation(this->shader_program, "G"), 1, GL_FALSE, &g[0][0]);
 	glUniformMatrix4fv(glGetUniformLocation(this->shader_program, "M"), 1, GL_FALSE, &(this->model_matrix[0][0]));
 	glUniform4f( glGetUniformLocation(this->shader_program, "lightPosition"),0,0,5,1); // Na razie na sztywno, później normalnie przekazywać wektor
-	this->setTextureUniforms();
+	this->setTextureUniforms().setLightUniforms(lights);
 	
 	this->activateTextures(); // Przypisywanie tekstur do jednostek teksturujących
 	
@@ -262,6 +262,10 @@ Drawable& Drawable::draw(const glm::mat4& v, const glm::mat4& p){
 	glDrawElements(GL_TRIANGLES, this->indices->size() ,GL_UNSIGNED_SHORT, NULL); 
 	glBindVertexArray(0);	
 	
+	return *(this);
+}
+
+Drawable& Drawable::setLightUniforms(const struct light *lights){
 	return *(this);
 }
 
