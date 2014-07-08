@@ -17,7 +17,7 @@ struct light{
 		specular = glm::vec4(1,1,1,1);
 		position = glm::vec4(0,0,0,1);
 		shininess = 50;
-		k = 1.0f;
+		k = 0.05f;
 	}
 };
 

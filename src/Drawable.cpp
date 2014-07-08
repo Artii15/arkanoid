@@ -231,7 +231,7 @@ const std::vector< unsigned short >* Drawable::getIndices(){
 	return this->indices;
 }
 
-Drawable& Drawable::draw(const glm::mat4& v, const glm::mat4& p, const struct light* lights){
+Drawable& Drawable::draw(const glm::mat4& v, const glm::mat4& p, const std::vector<struct light*>& lights){
 
 	double cur_time = glutGet(GLUT_ELAPSED_TIME);
 	float dt = (cur_time - this->time)/1000.f;
@@ -265,7 +265,20 @@ Drawable& Drawable::draw(const glm::mat4& v, const glm::mat4& p, const struct li
 	return *(this);
 }
 
-Drawable& Drawable::setLightUniforms(const struct light *lights){
+Drawable& Drawable::setLightUniforms(const std::vector<struct light*>& lights){
+	for(unsigned int i=0; i<lights.size(); i++){
+		std::string beginning = "lights[";
+		std::ostringstream ss;
+		ss << i;
+		beginning += ss.str() + "].";
+		// Z powyższych funkcji i poniższych wywołań funkcji tworzymy stringi typu "lights[i].position"
+		glUniform4fv(glGetUniformLocation(this->shader_program, (beginning + "ambient").c_str()), 1, &(lights[i]->ambient[0]));
+		glUniform4fv(glGetUniformLocation(this->shader_program, (beginning + "diffuse").c_str()), 1, &(lights[i]->diffuse[0]));
+		glUniform4fv(glGetUniformLocation(this->shader_program, (beginning + "specular").c_str()), 1, &(lights[i]->specular[0]));
+		glUniform4fv(glGetUniformLocation(this->shader_program, (beginning + "position").c_str()), 1, &(lights[i]->position[0]));
+		glUniform1i(glGetUniformLocation(this->shader_program, (beginning + "shininess").c_str()), lights[i]->shininess);
+		glUniform1f(glGetUniformLocation(this->shader_program, (beginning + "k").c_str()), lights[i]->k);
+	}
 	return *(this);
 }
 

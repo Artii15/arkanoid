@@ -8,6 +8,7 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "inc/light.h"
 #include "inc/Exception.h"
+#include <vector>
 
 using namespace std;
 
@@ -15,19 +16,22 @@ using namespace std;
 int windowPositionX = 100;
 int windowPositionY = 100;
 float windowWidth = 800.0f;
-float windowHeight = 600.0f;
-GLuint lights_count = 1;
-struct light *lights;
+float windowHeight = 600.0f; 
+std::vector<struct light*> lights;
 Drawable *d;
 
 void initLights(){
-	lights = new struct light[lights_count];
-	lights[0].position[2] = 5;
+	lights.push_back(new light());
+	lights[0]->position[2] = 5;
 }
 
 void clean(){
+	for(unsigned int i=0; i<lights.size(); i++){
+		if(lights[i] != NULL){
+			delete lights[i];
+		}
+	}
 	delete d;
-	delete [] lights;
 }
 
 //Procedura wywoływana przy zmianie rozmiaru okna
@@ -91,7 +95,7 @@ int main(int argc, char** argv)
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 	glEnable(GL_CULL_FACE);
-	
+	initLights();
 	//////////// Ładowanie do pamięci karty //////////////////////
 	d = new Drawable();
 	d->loadShaders("shaders/vertex/bat.txt", "shaders/fragment/bat.txt");
