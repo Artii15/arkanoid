@@ -49,7 +49,7 @@ void displayFrame() {
 	//Wylicz macierz rzutowania
 	glm::mat4 p = glm::perspective(0.785f, windowWidth/windowHeight, 1.0f, 100.0f);
 	//Wylicz macierz widoku
-	glm::mat4 v = glm::lookAt(glm::vec3(0.0f,0.0f,4.0f),glm::vec3(0.0f,0.0f,0.0f),glm::vec3(0.0f,1.0f,0.0f)); 
+	glm::mat4 v = glm::lookAt(glm::vec3(0.0f,0.0f,20.0f),glm::vec3(0.0f,0.0f,0.0f),glm::vec3(0.0f,1.0f,0.0f)); 
 	
 	scene->run(v, p);
 	
@@ -109,10 +109,10 @@ void initObjects(){
 	for(int i=0; i<3; i++){
 		Ball *b = new Ball();
 		b->loadShaders("shaders/vertex/bat.txt", "shaders/fragment/bat.txt");
-		b->loadObj("models/cube.obj");
-		b->setDiffuseTexture("textures/t2.tga");
+		b->loadObj("models/sphere.obj");
+		b->setDiffuseTexture("textures/golf_ball.tga");
 		b->setAmbientTexture(b->getTextures().diffuse, b->getSamplers().diffuse);
-		b->setSpecularTexture("textures/metal.tga");
+		b->setSpecularTexture(b->getTextures().diffuse, b->getSamplers().diffuse);
 		scene->addBall(b);
 	}
 }

@@ -47,7 +47,6 @@ class Drawable{
 		GLuint vao;
 		std::vector< GLuint > VBOs;
 		bool shaders_loaded;
-		double time; // Tymczasowe, wywalić po testach animacji
 		struct textures textures;
 		struct materials_samplers samplers;
 		GLuint loadTexture(const char* filename, GLuint sampler_nr);
@@ -72,6 +71,8 @@ class Drawable{
 		Drawable& setDiffuseTexture(GLuint tex, GLuint sampler_nr);
 		const struct textures& getTextures();
 		const struct materials_samplers& getSamplers();
+		const glm::mat4& getModelMatrix();
+		Drawable& setModelMatrix(const glm::mat4 &m);
 };
 
 #endif
