@@ -23,6 +23,9 @@ Drawable *d;
 void initLights(){
 	lights.push_back(new light());
 	lights[0]->position[2] = 5;
+	
+	lights.push_back(new light());
+	lights[1]->position[0] = 5;
 }
 
 void clean(){

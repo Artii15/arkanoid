@@ -1,6 +1,6 @@
 #version 130
 
-#define MAX_LIGHTS 1 // Zawsze ustawiać <= liczbie świateł z game.cpp
+#define MAX_LIGHTS 2 // Zawsze ustawiać <= liczbie świateł z game.cpp
 
 struct light{
 	vec4 ambient;
