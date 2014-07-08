@@ -6,10 +6,13 @@
 #define GLM_FORCE_RADIANS
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
-#include "inc/light.h"
 #include "inc/Exception.h"
 #include <vector>
 #include "inc/Scene.h"
+#include "inc/Ball.h"
+#include "inc/Bat.h"
+#include "inc/Block.h"
+#include "inc/light.h"
 
 using namespace std;
 
@@ -18,25 +21,10 @@ int windowPositionX = 100;
 int windowPositionY = 100;
 float windowWidth = 800.0f;
 float windowHeight = 600.0f; 
-std::vector<struct light*> lights;
-Drawable *d;
+Scene *scene;
 
-void initLights(){
-	lights.push_back(new light());
-	lights[0]->position[2] = 5;
-	
-	lights.push_back(new light());
-	lights[1]->position[0] = 5;
-}
-
-void clean(){
-	for(unsigned int i=0; i<lights.size(); i++){
-		if(lights[i] != NULL){
-			delete lights[i];
-		}
-	}
-	delete d;
-}
+//Inicjalizacja obiektów na scenie
+void initObjects();
 
 //Procedura wywoływana przy zmianie rozmiaru okna
 void changeSize(int w, int h) {
@@ -59,11 +47,9 @@ void displayFrame() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	//Wylicz macierz rzutowania
-	glm::mat4 p = glm::perspective(0.785f, windowWidth/windowHeight, 1.0f, 100.0f);
+	//glm::mat4 p = glm::perspective(0.785f, windowWidth/windowHeight, 1.0f, 100.0f);
 	//Wylicz macierz widoku
-	glm::mat4 v = glm::lookAt(glm::vec3(0.0f,0.0f,4.0f),glm::vec3(0.0f,0.0f,0.0f),glm::vec3(0.0f,1.0f,0.0f)); 
-	
-	d->draw(v, p, lights);
+	//glm::mat4 v = glm::lookAt(glm::vec3(0.0f,0.0f,4.0f),glm::vec3(0.0f,0.0f,0.0f),glm::vec3(0.0f,1.0f,0.0f)); 
 	
 	//Tylny bufor na przedni
 	glutSwapBuffers();
@@ -94,22 +80,38 @@ int main(int argc, char** argv)
 		fprintf(stderr, "Failed to initialize GLEW\n");
 		return -1;
 	}
-		
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 	glEnable(GL_CULL_FACE);
-	initLights();
+	
+	scene = new Scene();
 	//////////// Ładowanie do pamięci karty //////////////////////
+	/*
 	d = new Drawable();
 	d->loadShaders("shaders/vertex/bat.txt", "shaders/fragment/bat.txt");
 	d->loadObj("models/cube.obj");
 	d->setDiffuseTexture("textures/t2.tga");
 	d->setAmbientTexture(d->getTextures().diffuse, d->getSamplers().diffuse);
-	d->setSpecularTexture("textures/metal.tga");
+	d->setSpecularTexture("textures/metal.tga");*/
 	/////////////////////////////////////////////////////////////
+	
 	glutMainLoop();
-	clean();
+	delete scene;
 	printf("Zamykanie\n"); // Żeby wiedzieć czy włączyła się funkcja clean
 	return 0;
+}
+
+void initObjects(){
+	// Nie zwalniać pamięci po inicjalizowanych tutaj obiektach pod warunkiem, że będą podpięte pod obiekt sceny
+	// Piłki
+	for(int i=0; i<3; i++){
+		Ball *b = new Ball();
+		b->loadShaders("shaders/vertex/bat.txt", "shaders/fragment/bat.txt");
+		b->loadObj("models/cube.obj");
+		b->setDiffuseTexture("textures/t2.tga");
+		b->setAmbientTexture(b->getTextures().diffuse, b->getSamplers().diffuse);
+		b->setSpecularTexture("textures/metal.tga");
+		scene->addBall(b);
+	}
 }
