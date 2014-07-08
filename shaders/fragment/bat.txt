@@ -15,10 +15,10 @@ in vec2 iTexCoord; // Współrzędne teksturowania interpolowane
 // Wektory
 in vec4 iN;
 in vec4 iV;
-in vec4 iL;
+in vec4 iLs[MAX_LIGHTS];
 
 // Odległość od światła
-in float iDist;
+in float iDists[MAX_LIGHTS];
 
 out vec4 pixelColor; //Zmienna wyjsciowa fragment shadera. Zapisuje sie do niej ostateczny (prawie) kolor piksela
 
@@ -34,27 +34,31 @@ void main(void) {
 	vec4 Ma = texture(ambientSamp, iTexCoord);
 	vec4 Ms = texture(specularSamp, iTexCoord);
 	
-	vec4 l = normalize(iL);
 	vec4 v = normalize(iV);
 	vec4 n = normalize(iN);
-	vec4 r = reflect(-l, n);
+	
+	pixelColor = vec4(0,0,0,1);
+	
+	for(int i=0; i<MAX_LIGHTS; i++){
+		vec4 l = normalize(iLs[i]);
+		vec4 r = reflect(-l, n);
 
-	// Cosinus kąta między wektorem normalnym, a promieniem światła
-	float nl = max(dot(n, l), 0); // Dzięki normalizacji, bez dzielenia przez długości wektorów
+		// Cosinus kąta między wektorem normalnym, a promieniem światła
+		float nl = max(dot(n, l), 0); // Dzięki normalizacji, bez dzielenia przez długości wektorów
 	
-	// Składowa światła rozproszonego
-	vec3 diffuse = (lights[0].diffuse).rgb*Md.rgb*vec3(nl,nl,nl);
+		// Składowa światła rozproszonego
+		vec3 diffuse = (lights[i].diffuse).rgb*Md.rgb*vec3(nl,nl,nl);
 	
-	// Światło otoczenia
-	vec3 ambient = (lights[0].ambient).rgb*Ma.rgb;
+		// Światło otoczenia
+		vec3 ambient = (lights[i].ambient).rgb*Ma.rgb;
 	
-	//Światło odbite
-	float rv = pow(max(dot(r, v),0), lights[0].shininess);
-	vec3 specular = (lights[0].specular).rgb*Ms.rgb*vec3(rv,rv,rv);
+		//Światło odbite
+		float rv = pow(max(dot(r, v),0), lights[i].shininess);
+		vec3 specular = (lights[i].specular).rgb*Ms.rgb*vec3(rv,rv,rv);
 	
-	// Osłabianie światła wraz z odległością
-	float attenuation = 1.0 / (1.0 + lights[0].k * pow(iDist, 2)); // Współczynnik osłabienia (0.05) powinien być w uniformie
+		// Osłabianie światła wraz z odległością
+		float attenuation = 1.0 / (1.0 + lights[i].k * pow(iDists[i], 2));
 	
-	pixelColor.rgb = ambient + attenuation*(diffuse + specular);
-	pixelColor.a = 1;
+		pixelColor.rgb = pixelColor.rgb + (ambient + attenuation*(diffuse + specular));
+	}
 }

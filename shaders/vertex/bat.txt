@@ -26,9 +26,9 @@ in vec4 normal;
 
 out vec2 iTexCoord; // Współrzędne tekstur do interpolacji 
 out vec4 iN;
-out vec4 iL;
 out vec4 iV;
-out float iDist;
+out vec4 iLs[MAX_LIGHTS];
+out float iDists[MAX_LIGHTS];
 
 void main(void) {
 	iTexCoord = texCoord; // Współrzędne teksturowania
@@ -36,9 +36,12 @@ void main(void) {
 	
 	// Poniższe interpolowane wektory są w przestrzeni oka
 	iN = normalize( G*normal); // Wektor normalny
-	iL = normalize( V*(lights[0].position - worldPosition) ); // Wektor do światła
 	iV = normalize( vec4(0,0,0,1) - V*worldPosition ); // Wektor do obserwatora
-	iDist = length(lights[0].position - vertex);
+	
+	for(int i=0; i<MAX_LIGHTS; i++){
+		iLs[i] = normalize( V*(lights[i].position - worldPosition) ); // Wektor do światła
+		iDists[i] = length(lights[i].position - vertex); // Odległość do światła
+	}
 	
 	gl_Position = MVP*vertex;
 }
