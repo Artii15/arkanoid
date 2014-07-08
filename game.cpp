@@ -96,23 +96,44 @@ int main(int argc, char** argv)
 	return 0;
 }
 
+// Nie zwalniać pamięci po inicjalizowanych tutaj obiektach pod warunkiem, że będą podpięte pod obiekt sceny
 void initObjects(){
-	// Nie zwalniać pamięci po inicjalizowanych tutaj obiektach pod warunkiem, że będą podpięte pod obiekt sceny
 	// Światła
 	struct light *l1, *l2;
 	l1 = new struct light();
 	l1->position[2] = 5;
+	l1->position[1] = -4;
+	l1->k = 0.02f;
 	l2 = new struct light();
-	l2->position[0] = 5;
+	l2->position[2] = 5;
+	l2->position[1] = 5;
+	l2->k = 0.02f;
 	scene->addLight(l1).addLight(l2);
 	// Piłki
 	for(int i=0; i<3; i++){
 		Ball *b = new Ball();
 		b->loadShaders("shaders/vertex/bat.txt", "shaders/fragment/bat.txt");
 		b->loadObj("models/sphere.obj");
-		b->setDiffuseTexture("textures/golf_ball.tga");
+		b->setDiffuseTexture("textures/fire.tga");
 		b->setAmbientTexture(b->getTextures().diffuse, b->getSamplers().diffuse);
 		b->setSpecularTexture(b->getTextures().diffuse, b->getSamplers().diffuse);
 		scene->addBall(b);
 	}
+	// Paletka
+	Bat *bat = new Bat();
+	bat->loadShaders("shaders/vertex/bat.txt", "shaders/fragment/bat.txt");
+	bat->loadObj("models/bat.obj");
+	bat->setDiffuseTexture("textures/metal.tga");
+	bat->setAmbientTexture(bat->getTextures().diffuse, bat->getSamplers().diffuse);
+	bat->setSpecularTexture(bat->getTextures().diffuse, bat->getSamplers().diffuse);
+	bat->setModelMatrix(glm::translate(glm::rotate(glm::scale(bat->getModelMatrix(), glm::vec3(2.5f,2.5f,2.5f)), 3.14f, glm::vec3(0,1,0)), glm::vec3(0.0f, -3.0f, 0.0f)));
+	scene->setBat(bat);
+	// Pomieszczenie
+	Drawable *box = new Drawable();
+	box->loadShaders("shaders/vertex/bat.txt", "shaders/fragment/bat.txt");
+	box->loadObj("models/box.obj");
+	box->setDiffuseTexture("textures/t2.tga");
+	box->setAmbientTexture(box->getTextures().diffuse, box->getSamplers().diffuse);
+	box->setSpecularTexture(box->getTextures().diffuse, box->getSamplers().diffuse);
+	scene->setBox(box);
 }

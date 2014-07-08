@@ -70,10 +70,17 @@ Scene& Scene::addLight(struct light *l){
 }
 
 int Scene::run(const glm::mat4& v, const glm::mat4& p){
+	if(this->box != NULL){
+		this->box->draw(v,p,this->lights);
+	}
 	if(this->balls.size() > 0){
 		if(this->balls[0] != NULL ){
 			this->balls[0]->draw(v,p,this->lights);
 		}
 	}
+	if(this->bat != NULL){
+		this->bat->draw(v,p,this->lights);
+	}
+	
 	return 0;
 }

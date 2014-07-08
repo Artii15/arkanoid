@@ -3,7 +3,7 @@
 
 #include "Drawable.h"
 
-class Bat: Drawable{
+class Bat: public Drawable{
 	
 };
 
