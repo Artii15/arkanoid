@@ -1,7 +1,9 @@
 #ifndef BALL_H
 #define BALL_H
 
-class Ball{
+#include "Drawable.h"
+
+class Ball: Drawable{
 	
 };
 

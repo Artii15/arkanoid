@@ -9,6 +9,7 @@
 #include "inc/light.h"
 #include "inc/Exception.h"
 #include <vector>
+#include "inc/Scene.h"
 
 using namespace std;
 
@@ -109,6 +110,6 @@ int main(int argc, char** argv)
 	/////////////////////////////////////////////////////////////
 	glutMainLoop();
 	clean();
-	
+	printf("Zamykanie\n"); // Żeby wiedzieć czy włączyła się funkcja clean
 	return 0;
 }
