@@ -47,9 +47,11 @@ void displayFrame() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	//Wylicz macierz rzutowania
-	//glm::mat4 p = glm::perspective(0.785f, windowWidth/windowHeight, 1.0f, 100.0f);
+	glm::mat4 p = glm::perspective(0.785f, windowWidth/windowHeight, 1.0f, 100.0f);
 	//Wylicz macierz widoku
-	//glm::mat4 v = glm::lookAt(glm::vec3(0.0f,0.0f,4.0f),glm::vec3(0.0f,0.0f,0.0f),glm::vec3(0.0f,1.0f,0.0f)); 
+	glm::mat4 v = glm::lookAt(glm::vec3(0.0f,0.0f,4.0f),glm::vec3(0.0f,0.0f,0.0f),glm::vec3(0.0f,1.0f,0.0f)); 
+	
+	scene->run(v, p);
 	
 	//Tylny bufor na przedni
 	glutSwapBuffers();
@@ -86,15 +88,7 @@ int main(int argc, char** argv)
 	glEnable(GL_CULL_FACE);
 	
 	scene = new Scene();
-	//////////// Ładowanie do pamięci karty //////////////////////
-	/*
-	d = new Drawable();
-	d->loadShaders("shaders/vertex/bat.txt", "shaders/fragment/bat.txt");
-	d->loadObj("models/cube.obj");
-	d->setDiffuseTexture("textures/t2.tga");
-	d->setAmbientTexture(d->getTextures().diffuse, d->getSamplers().diffuse);
-	d->setSpecularTexture("textures/metal.tga");*/
-	/////////////////////////////////////////////////////////////
+	initObjects();
 	
 	glutMainLoop();
 	delete scene;
@@ -104,6 +98,13 @@ int main(int argc, char** argv)
 
 void initObjects(){
 	// Nie zwalniać pamięci po inicjalizowanych tutaj obiektach pod warunkiem, że będą podpięte pod obiekt sceny
+	// Światła
+	struct light *l1, *l2;
+	l1 = new struct light();
+	l1->position[2] = 5;
+	l2 = new struct light();
+	l2->position[0] = 5;
+	scene->addLight(l1).addLight(l2);
 	// Piłki
 	for(int i=0; i<3; i++){
 		Ball *b = new Ball();

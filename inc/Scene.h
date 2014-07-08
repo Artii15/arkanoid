@@ -17,6 +17,7 @@ class Scene{
 		Scene& setBat(Bat* b);
 		Scene& addBall(Ball* b);
 		Scene& setBox(Drawable* b);
+		int run(const glm::mat4& v, const glm::mat4& p);
 		
 	private:
 		std::vector<struct light*> lights; // Oświetlenie sceny
