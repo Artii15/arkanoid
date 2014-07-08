@@ -105,9 +105,9 @@ void initObjects(){
 	l1->position[1] = -4;
 	l1->k = 0.02f;
 	l2 = new struct light();
-	l2->position[2] = 5;
-	l2->position[1] = 5;
-	l2->k = 0.02f;
+	l2->position[2] = 0;
+	l2->position[1] = 0;
+	l2->k = 0.0f;
 	scene->addLight(l1).addLight(l2);
 	// Piłki
 	for(int i=0; i<3; i++){
@@ -126,7 +126,7 @@ void initObjects(){
 	bat->setDiffuseTexture("textures/metal.tga");
 	bat->setAmbientTexture(bat->getTextures().diffuse, bat->getSamplers().diffuse);
 	bat->setSpecularTexture(bat->getTextures().diffuse, bat->getSamplers().diffuse);
-	bat->setModelMatrix(glm::translate(glm::rotate(glm::scale(bat->getModelMatrix(), glm::vec3(2.5f,2.5f,2.5f)), 3.14f, glm::vec3(0,1,0)), glm::vec3(0.0f, -3.0f, 0.0f)));
+	bat->setModelMatrix(glm::translate(glm::rotate(glm::scale(bat->getModelMatrix(), glm::vec3(2.5f,2.5f,2.5f)), 0.0f, glm::vec3(0,1,0)), glm::vec3(0.0f, -3.0f, 0.0f)));
 	scene->setBat(bat);
 	// Pomieszczenie
 	Drawable *box = new Drawable();
@@ -136,4 +136,20 @@ void initObjects(){
 	box->setAmbientTexture(box->getTextures().diffuse, box->getSamplers().diffuse);
 	box->setSpecularTexture(box->getTextures().diffuse, box->getSamplers().diffuse);
 	scene->setBox(box);
+	// Bloki do strącania: 3 rzędy po 5 bloków
+	glm::mat4 m_matrix = glm::translate(glm::mat4(1.0f), glm::vec3(-4,7,0));
+	for(int i=0; i<3; i++){
+		for(int j=0; j<5; j++){
+			Block *b = new Block();
+			b->loadShaders("shaders/vertex/bat.txt", "shaders/fragment/bat.txt");
+			b->loadObj("models/cube.obj");
+			b->setDiffuseTexture("textures/fire.tga");
+			b->setAmbientTexture(b->getTextures().diffuse, b->getSamplers().diffuse);
+			b->setSpecularTexture(b->getTextures().diffuse, b->getSamplers().diffuse);
+			b->setModelMatrix(m_matrix);
+			scene->addBlock(b);
+			m_matrix = glm::translate(m_matrix, glm::vec3(2, 0, 0));
+		}
+		m_matrix = glm::translate(m_matrix, glm::vec3(-10, -2, 0));
+	}
 }

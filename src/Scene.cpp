@@ -81,6 +81,10 @@ int Scene::run(const glm::mat4& v, const glm::mat4& p){
 	if(this->bat != NULL){
 		this->bat->draw(v,p,this->lights);
 	}
-	
+	for(unsigned int i=0; i < this->blocks.size(); i++){
+		if(this->blocks[i] != NULL){
+			this->blocks[i]->draw(v,p,this->lights);
+		}
+	}
 	return 0;
 }

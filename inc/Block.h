@@ -3,7 +3,7 @@
 
 #include "Drawable.h"
 
-class Block: Drawable{
+class Block: public Drawable{
 	
 };
 
