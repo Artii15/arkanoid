@@ -251,7 +251,6 @@ Drawable& Drawable::draw(const glm::mat4& v, const glm::mat4& p, const std::vect
 	glUniformMatrix4fv(glGetUniformLocation(this->shader_program, "P"), 1, GL_FALSE, &p[0][0]);
 	glUniformMatrix4fv(glGetUniformLocation(this->shader_program, "G"), 1, GL_FALSE, &g[0][0]);
 	glUniformMatrix4fv(glGetUniformLocation(this->shader_program, "M"), 1, GL_FALSE, &(this->model_matrix[0][0]));
-	glUniform4f( glGetUniformLocation(this->shader_program, "lightPosition"),0,0,5,1); // Na razie na sztywno, później normalnie przekazywać wektor
 	this->setTextureUniforms().setLightUniforms(lights);
 	
 	this->activateTextures(); // Przypisywanie tekstur do jednostek teksturujących

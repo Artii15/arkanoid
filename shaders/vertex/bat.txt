@@ -1,11 +1,23 @@
 #version 130
 
+#define MAX_LIGHTS 1 // Zawsze ustawiać <= liczbie świateł z game.cpp
+
+struct light{
+	vec4 ambient;
+	vec4 diffuse;
+	vec4 specular;
+	vec4 position;
+	int shininess;
+	float k;
+};
+
 //Zmienne jednorodne
 uniform mat4 MVP;
 uniform mat4 G;
 uniform mat4 V;
 uniform mat4 M;
-uniform vec4 lightPosition;
+
+uniform light lights[MAX_LIGHTS];
 
 //Atrybuty
 in vec4 vertex; 
@@ -24,9 +36,9 @@ void main(void) {
 	
 	// Poniższe interpolowane wektory są w przestrzeni oka
 	iN = normalize( G*normal); // Wektor normalny
-	iL = normalize( V*(lightPosition - worldPosition) ); // Wektor do światła
+	iL = normalize( V*(lights[0].position - worldPosition) ); // Wektor do światła
 	iV = normalize( vec4(0,0,0,1) - V*worldPosition ); // Wektor do obserwatora
-	iDist = length(lightPosition - vertex);
+	iDist = length(lights[0].position - vertex);
 	
 	gl_Position = MVP*vertex;
 }

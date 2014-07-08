@@ -43,17 +43,14 @@ void main(void) {
 	float nl = max(dot(n, l), 0); // Dzięki normalizacji, bez dzielenia przez długości wektorów
 	
 	// Składowa światła rozproszonego
-	vec3 diffuse = (lights[0].diffuse).rgb*Md.rgb*vec3(nl,nl,nl); // Na razie na sztywno kolor światła rozpraszanego, wszystkie "sztywne światła" deklarować jako uniformy
+	vec3 diffuse = (lights[0].diffuse).rgb*Md.rgb*vec3(nl,nl,nl);
 	
 	// Światło otoczenia
-	vec3 ambientColor = vec3(0,0,0);
-	vec3 ambient = ambientColor*Ma.rgb;
+	vec3 ambient = (lights[0].ambient).rgb*Ma.rgb;
 	
 	//Światło odbite
-	float shininess = 50;
-	float rv = pow(max(dot(r, v),0),shininess);
-	vec3 reflectedColor = vec3(1,1,1); // Również przenieść do uniformu
-	vec3 specular = reflectedColor*Ms.rgb*vec3(rv,rv,rv);
+	float rv = pow(max(dot(r, v),0), lights[0].shininess);
+	vec3 specular = (lights[0].specular).rgb*Ms.rgb*vec3(rv,rv,rv);
 	
 	// Osłabianie światła wraz z odległością
 	float attenuation = 1.0 / (1.0 + lights[0].k * pow(iDist, 2)); // Współczynnik osłabienia (0.05) powinien być w uniformie
