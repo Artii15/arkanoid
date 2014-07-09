@@ -14,8 +14,11 @@ class Ball: public Drawable{
 		
 	public:
 		Ball();
+		virtual ~Ball();
 		Ball& move(float speed = 1.0f);
 		virtual Drawable& loadObj(const char *path);
+		float getRadius(); // W przestrzeni świata
+		const glm::vec4& getCenter(); // W przestrzeni świata
 };
 
 #endif

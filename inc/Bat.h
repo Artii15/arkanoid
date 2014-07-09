@@ -4,7 +4,8 @@
 #include "Drawable.h"
 
 class Bat: public Drawable{
-	
+	public:
+		virtual ~Bat();
 };
 
 #endif

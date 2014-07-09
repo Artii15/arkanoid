@@ -7,6 +7,8 @@ Ball::Ball(){
 	this->radius = 0;
 }
 
+Ball::~Ball(){}
+
 Ball& Ball::move(float speed){
 	float current_time = glutGet(GLUT_ELAPSED_TIME);
 	float dt = (current_time-this->time)/1000.0f;

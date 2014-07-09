@@ -58,10 +58,11 @@ class Drawable{
 		Drawable& setTextureUniforms();
 		Drawable& setLightUniforms(const std::vector<struct light*>& lights);
 		Drawable& recalculateCoordinates2D();
+		const glm::vec3* getCoordinates2D(); // Zwrócone w przestrzeni świata
 	
 	public:
 		Drawable();
-		~Drawable();
+		virtual ~Drawable();
 		const std::vector< glm::vec4 >* getVertices();
 		const std::vector< unsigned short >* getIndices();
 		virtual Drawable& loadObj(const char *path);

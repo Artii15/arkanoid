@@ -4,7 +4,8 @@
 #include "Drawable.h"
 
 class Block: public Drawable{
-	
+	public:
+		virtual ~Block();
 };
 
 #endif
