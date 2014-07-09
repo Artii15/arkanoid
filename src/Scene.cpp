@@ -75,6 +75,7 @@ int Scene::run(const glm::mat4& v, const glm::mat4& p){
 	}
 	if(this->balls.size() > 0){
 		if(this->balls[0] != NULL ){
+			this->balls[0]->move(5.0f);
 			this->balls[0]->draw(v,p,this->lights);
 		}
 	}

@@ -101,12 +101,18 @@ void initObjects(){
 	// Światła
 	struct light *l1, *l2;
 	l1 = new struct light();
-	l1->position[2] = 5;
-	l1->position[1] = -4;
-	l1->k = 0.02f;
+	l1->position[2] = 3;
+	l1->position[1] = 5;
+	l1->k = 0.01f;
 	l2 = new struct light();
 	l2->position[2] = 0;
 	l2->position[1] = 0;
+	l2->diffuse[0] = 0;
+	l2->diffuse[1] = 0.5f;
+	l2->diffuse[2] = 1;
+	l2->specular[0] = 1;
+	l2->specular[1] = 1;
+	l2->specular[2] = 1;
 	l2->k = 0.0f;
 	scene->addLight(l1).addLight(l2);
 	// Piłki
@@ -117,6 +123,7 @@ void initObjects(){
 		b->setDiffuseTexture("textures/fire.tga");
 		b->setAmbientTexture(b->getTextures().diffuse, b->getSamplers().diffuse);
 		b->setSpecularTexture(b->getTextures().diffuse, b->getSamplers().diffuse);
+		b->setModelMatrix(glm::scale(b->getModelMatrix(), glm::vec3(0.5f, 0.5f, 0.5f)));
 		scene->addBall(b);
 	}
 	// Paletka
@@ -126,7 +133,7 @@ void initObjects(){
 	bat->setDiffuseTexture("textures/metal.tga");
 	bat->setAmbientTexture(bat->getTextures().diffuse, bat->getSamplers().diffuse);
 	bat->setSpecularTexture(bat->getTextures().diffuse, bat->getSamplers().diffuse);
-	bat->setModelMatrix(glm::translate(glm::rotate(glm::scale(bat->getModelMatrix(), glm::vec3(2.5f,2.5f,2.5f)), 0.0f, glm::vec3(0,1,0)), glm::vec3(0.0f, -3.0f, 0.0f)));
+	bat->setModelMatrix(glm::translate(glm::scale(bat->getModelMatrix(), glm::vec3(2.0f,2.0f,2.0f)), glm::vec3(0.0f, -3.0f, 0.0f)));
 	scene->setBat(bat);
 	// Pomieszczenie
 	Drawable *box = new Drawable();
@@ -136,10 +143,10 @@ void initObjects(){
 	box->setAmbientTexture(box->getTextures().diffuse, box->getSamplers().diffuse);
 	box->setSpecularTexture(box->getTextures().diffuse, box->getSamplers().diffuse);
 	scene->setBox(box);
-	// Bloki do strącania: 3 rzędy po 5 bloków
-	glm::mat4 m_matrix = glm::translate(glm::mat4(1.0f), glm::vec3(-4,7,0));
+	// Bloki do strącania: 3 rzędy po 6 bloków
+	glm::mat4 m_matrix = glm::translate(glm::scale(glm::mat4(1.0f), glm::vec3(3.0f, 1.0f, 1.0f)), glm::vec3(-2.9f,7.0f,0.0f));
 	for(int i=0; i<3; i++){
-		for(int j=0; j<5; j++){
+		for(int j=0; j<6; j++){
 			Block *b = new Block();
 			b->loadShaders("shaders/vertex/bat.txt", "shaders/fragment/bat.txt");
 			b->loadObj("models/cube.obj");
@@ -148,8 +155,8 @@ void initObjects(){
 			b->setSpecularTexture(b->getTextures().diffuse, b->getSamplers().diffuse);
 			b->setModelMatrix(m_matrix);
 			scene->addBlock(b);
-			m_matrix = glm::translate(m_matrix, glm::vec3(2, 0, 0));
+			m_matrix = glm::translate(m_matrix, glm::vec3(1.1f, 0, 0));
 		}
-		m_matrix = glm::translate(m_matrix, glm::vec3(-10, -2, 0));
+		m_matrix = glm::translate(m_matrix, glm::vec3(-6*1.1f, -1.5f, 0));
 	}
 }
