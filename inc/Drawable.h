@@ -59,7 +59,7 @@ class Drawable{
 		~Drawable();
 		const std::vector< glm::vec4 >* getVertices();
 		const std::vector< unsigned short >* getIndices();
-		Drawable& loadObj(const char *path);
+		virtual Drawable& loadObj(const char *path);
 		Drawable& loadShaders(const char * vertex_file_path,const char * fragment_file_path);
 		GLuint getShaderProgram();
 		Drawable& draw(const glm::mat4& v, const glm::mat4& p, const std::vector<struct light*>& lights);
