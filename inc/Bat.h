@@ -5,7 +5,8 @@
 
 class Bat : public Drawable{
 	protected: 
-		glm::vec3 direction;	
+		glm::vec3 direction;
+		float time;	
 	
 	public:
 		Bat();

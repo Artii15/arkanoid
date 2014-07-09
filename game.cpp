@@ -68,22 +68,22 @@ void displayFrame() {
 void keyDown(int c, int x, int y) {
 	switch (c) {
 	case GLUT_KEY_F1:
-		cam_x = cam_x + 10.0f*dt;
+		cam_x = cam_x + 10.0f;
 		break;
 	case GLUT_KEY_F2:
-		cam_x = cam_x - 10.0f*dt;
+		cam_x = cam_x - 10.0f;
 		break;
 	case GLUT_KEY_F3:
-		cam_z = cam_z + 10.0f*dt;
+		cam_z = cam_z + 10.0f;
 		break;
 	case GLUT_KEY_F4:
-		cam_z = cam_z - 10.0f*dt;
+		cam_z = cam_z - 10.0f;
 		break;
 	case GLUT_KEY_LEFT:
-		scene->getBat()->setDirection(-5.0f*dt);
+		scene->getBat()->setDirection(-10.0f);
 		break;
 	case GLUT_KEY_RIGHT:
-		scene->getBat()->setDirection(5.0f*dt);
+		scene->getBat()->setDirection(10.0f);
 		break;
 	}
 }

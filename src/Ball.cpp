@@ -97,7 +97,9 @@ Ball& Ball::bounce(glm::vec4* rect){
 }
 
 Ball& Ball::setSummaryDirection(glm::vec3 dir){
-	this->direction = this->direction+dir*glm::vec3(5,5,5);
+	if(glm::length(dir) > 0){
+		this->direction = glm::normalize(this->direction+glm::normalize(dir));
+	}
 	
 	return *(this);
 }

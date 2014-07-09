@@ -21,6 +21,7 @@ class Scene{
 		int run(const glm::mat4& v, const glm::mat4& p);
 		bool checkBallCollision(); // Zwraca wskaźnik do obiektu z którym doszło do kolizji
 		bool checkBallCollision(glm::vec4 *coords, float radius, glm::vec4& center);
+		Scene& checkBatCollision();
 		
 	private:
 		std::vector<struct light*> lights; // Oświetlenie sceny

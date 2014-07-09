@@ -78,7 +78,7 @@ int Scene::run(const glm::mat4& v, const glm::mat4& p){
 	}
 	if(this->balls.size() > 0){
 		if(this->balls[0] != NULL ){
-			this->balls[0]->move(10.0f);
+			this->balls[0]->move(20.0f);
 			this->balls[0]->draw(v,p,this->lights);
 		}
 	}
@@ -92,6 +92,7 @@ int Scene::run(const glm::mat4& v, const glm::mat4& p){
 		}
 	}
 	this->checkBallCollision();
+	this->checkBatCollision(); // Kolizje paletki ze ścianą
 	
 	return 0;
 }
@@ -176,4 +177,26 @@ bool Scene::checkBallCollision(glm::vec4 *coords, float radius, glm::vec4& cente
 		return true;	
 	}
 	return false;
+}
+
+Scene& Scene::checkBatCollision(){
+	glm::vec4* bat_coords = this->bat->getCoordinates2D();
+	glm::vec4* wall_coords = this->box->getCoordinates2D();
+	
+	if(bat_coords[0][0] <= wall_coords[0][0]){
+		float diff = wall_coords[0][0] - bat_coords[0][0];
+		this->bat->setModelMatrix(glm::translate(this->bat->getModelMatrix(), glm::vec3(diff,0,0)));
+		this->bat->setDirection(1);
+	}
+	else if(bat_coords[1][0] >= wall_coords[1][0]){
+		float diff = wall_coords[1][0] - bat_coords[1][0];
+		this->bat->setDirection(1);
+		this->bat->setModelMatrix(glm::translate(this->bat->getModelMatrix(), glm::vec3(diff,0,0)));
+		this->bat->setDirection(-1);
+	}
+	
+	delete bat_coords;
+	delete wall_coords;
+	
+	return *(this);
 }
