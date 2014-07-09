@@ -7,7 +7,7 @@ class Bat : public Drawable{
 public:
 	Bat();
 	~Bat();
-	Bat& Bat::move(float x);
+	Bat& move(float x);
 };
 
 #endif

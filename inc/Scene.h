@@ -15,7 +15,7 @@ class Scene{
 		Scene& addLight(struct light *l);
 		Scene& addBlock(Block* b);
 		Scene& setBat(Bat* b);
-		Bat* Scene::getBat();
+		Bat* getBat();
 		Scene& addBall(Ball* b);
 		Scene& setBox(Drawable* b);
 		int run(const glm::mat4& v, const glm::mat4& p);
