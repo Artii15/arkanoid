@@ -127,6 +127,7 @@ bool Scene::checkBallCollision(){
 		}
 		glm::vec4* block_coords = this->blocks[i]->getCoordinates2D();
 		if(this->checkBallCollision(block_coords, radius, ball_center)){
+			this->balls[0]->bounce(block_coords);
 			delete block_coords;
 			return true;		
 		}

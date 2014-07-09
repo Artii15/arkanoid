@@ -1,7 +1,7 @@
 #include "../inc/Ball.h"
 
 Ball::Ball(){
-	this->direction = glm::vec3(0, -1, 0);
+	this->direction = glm::normalize(glm::vec3(0, -1, 0));
 	this->time = glutGet(GLUT_ELAPSED_TIME);
 	this->center = glm::vec4(0,0,0,1);
 	this->radius = 0;
@@ -90,7 +90,15 @@ Ball& Ball::bounce(glm::vec4* rect){
 	else{
 		normal = glm::vec3(0,-1,0);
 	}
-	this->direction = glm::reflect(this->direction, normal);
+	glm::vec3 rect_center = glm::vec3((rect[1][0] + rect[0][0])/2, (rect[0][1] + rect[2][1])/2, 0);
+	glm::vec3 to_center = glm::normalize(rect_center - glm::vec3(center_world[0], center_world[1], 0));
+	
+	glm::vec3 reflected = glm::reflect(this->direction, normal);
+	glm::vec3 normalized_reflected = glm::normalize(reflected);
+	// Zabezpieczenie przed utknięciem kulki w obiekcie
+	if( glm::dot(normalized_reflected, to_center) < 0 ){
+		this->direction = reflected;
+	}
 	
 	return *(this);
 }
