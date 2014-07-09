@@ -86,9 +86,7 @@ Ball& Ball::bounce(glm::vec4* rect){
 			normal = glm::vec3(0,-1,0);
 			break;
 	}
-	if(glm::dot(this->direction, normal) < 0){
-		this->direction = glm::reflect(this->direction, normal);
-	}
+	this->direction = glm::reflect(this->direction, normal);
 	
 	return *(this);
 }

@@ -4,8 +4,10 @@ Scene::Scene(short max_hits_count){
 	this->box = NULL;
 	this->bat = NULL;
 	this->max_hits_count = max_hits_count;
-	this->was_ball_block_collision = false;
 	this->was_ball_bat_collision = false;
+	for(short i=0; i < 4; i++){
+		this->was_ball_wall_collision[i] = false;
+	}
 }
 
 Scene::~Scene(){
@@ -39,7 +41,7 @@ Scene::~Scene(){
 
 Scene& Scene::addBlock(Block* b){
 	this->blocks.push_back(b);
-	
+	this->was_ball_block_collision.push_back(false);
 	return *(this);
 }
 
@@ -125,24 +127,49 @@ bool Scene::checkBallCollision(){
 	// Kolizja ze ścianą
 	glm::vec4* wall_coords = this->box->getCoordinates2D();
 	if( ball_center[0] - wall_coords[0][0] <= radius ){
-		this->balls[0]->bounce(glm::vec3(1,0,0));
-		delete wall_coords;
-		return true;
+		if(!this->was_ball_wall_collision[0]){
+			this->balls[0]->bounce(glm::vec3(1,0,0));
+			delete wall_coords;
+			this->was_ball_wall_collision[0] = true;
+			return true;
+		}
 	}
-	else if (wall_coords[1][0] - ball_center[0] <= radius){
-		this->balls[0]->bounce(glm::vec3(-1,0,0));
-		delete wall_coords;
-		return true;
-	}else if(wall_coords[0][1] - ball_center[1] <= radius){
-		this->balls[0]->bounce(glm::vec3(0,-1,0));
-		delete wall_coords;
-		return true;
+	else{
+		this->was_ball_wall_collision[0] = false;
 	}
-	else if(ball_center[1] - wall_coords[2][1] <= radius){
-		this->balls[0]->bounce(glm::vec3(0,1,0));
-		delete wall_coords;
-		return true;
-	} 
+	if (wall_coords[1][0] - ball_center[0] <= radius){
+		if(!this->was_ball_wall_collision[1]){
+			this->balls[0]->bounce(glm::vec3(-1,0,0));
+			delete wall_coords;
+			this->was_ball_wall_collision[1] = true;
+			return true;
+		}
+	}
+	else{
+		this->was_ball_wall_collision[1] = false;
+	}
+	if(wall_coords[0][1] - ball_center[1] <= radius){
+		if(!this->was_ball_wall_collision[2]){
+			this->balls[0]->bounce(glm::vec3(0,-1,0));
+			delete wall_coords;
+			this->was_ball_wall_collision[2] = true;
+			return true;
+		}
+	}
+	else{
+		this->was_ball_wall_collision[2] = false;
+	}
+	if(ball_center[1] - wall_coords[2][1] <= radius){
+		if(!this->was_ball_wall_collision[3]){
+			this->balls[0]->bounce(glm::vec3(0,1,0));
+			delete wall_coords;
+			this->was_ball_wall_collision[3] = true;
+			return true;
+		}
+	}
+	else{
+		this->was_ball_wall_collision[3] = false;
+	}
 	delete wall_coords;
 	
 	// Sprawdzanie kolizji z blokami
@@ -152,22 +179,24 @@ bool Scene::checkBallCollision(){
 		}
 		glm::vec4* block_coords = this->blocks[i]->getCoordinates2D();
 		if(this->checkBallCollision(block_coords, radius, ball_center)){
-			if(!this->was_ball_block_collision){
+			if(!this->was_ball_block_collision[i]){
 				this->balls[0]->bounce(block_coords);
 				if(this->blocks[i]->hit().getHitsCount() >= this->max_hits_count){
 					Block* tmp = this->blocks[i];
 					this->blocks[i] = this->blocks[this->blocks.size()-1];
-					this->blocks[this->blocks.size()-1] = tmp;
 					delete tmp;
 					this->blocks.pop_back();
+
+					this->was_ball_block_collision[i] = this->was_ball_block_collision[this->was_ball_block_collision.size()-1];
+					this->was_ball_block_collision.pop_back();
 				}
 			}
 			delete block_coords;
-			this->was_ball_block_collision = true;
+			this->was_ball_block_collision[i] = true;
 			return true;		
 		}
 		else{
-			this->was_ball_block_collision = false;
+			this->was_ball_block_collision[i] = false;
 			delete block_coords;
 		}
 	}
