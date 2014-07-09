@@ -17,13 +17,15 @@
 using namespace std;
 float cam_x = 0;
 float cam_y = 0;
-float cam_z = 0;
+float cam_z = 20.0f;
 
 //Ustawienia okna i rzutowania
 int windowPositionX = 100;
 int windowPositionY = 100;
 float windowWidth = 800.0f;
 float windowHeight = 600.0f; 
+float prev_time = glutGet(GLUT_ELAPSED_TIME);
+float dt = 0.0f;
 Scene *scene;
 
 //Inicjalizacja obiektów na scenie
@@ -40,6 +42,9 @@ void changeSize(int w, int h) {
 
 //Procedura uruchamiana okresowo. Robi animację.
 void nextFrame(void) {
+	float cur_time = glutGet(GLUT_ELAPSED_TIME);
+	dt = (cur_time - prev_time)/1000.0f;
+	prev_time = cur_time;
 	glutPostRedisplay();
 }
 
@@ -52,7 +57,7 @@ void displayFrame() {
 	//Wylicz macierz rzutowania
 	glm::mat4 p = glm::perspective(0.785f, windowWidth/windowHeight, 1.0f, 100.0f);
 	//Wylicz macierz widoku
-	glm::mat4 v = glm::lookAt(glm::vec3(0.0f,0.0f,20.0f),glm::vec3(0.0f,0.0f,0.0f),glm::vec3(0.0f,1.0f,0.0f)); 
+	glm::mat4 v = glm::lookAt(glm::vec3(cam_x,cam_y,cam_z),glm::vec3(0.0f,0.0f,0.0f),glm::vec3(0.0f,1.0f,0.0f)); 
 	
 	scene->run(v, p);
 	
@@ -63,22 +68,22 @@ void displayFrame() {
 void keyDown(int c, int x, int y) {
 	switch (c) {
 	case GLUT_KEY_F1:
-		cam_x = cam_x + 0.1;
+		cam_x = cam_x + 10.0f*dt;
 		break;
 	case GLUT_KEY_F2:
-		cam_x = cam_x - 0.1;
+		cam_x = cam_x - 10.0f*dt;
 		break;
 	case GLUT_KEY_F3:
-		cam_z = cam_z + 0.1;
+		cam_z = cam_z + 10.0f*dt;
 		break;
 	case GLUT_KEY_F4:
-		cam_z = cam_z - 0.1;
+		cam_z = cam_z - 10.0f*dt;
 		break;
 	case GLUT_KEY_LEFT:
-		scene->getBat()->move(-0.05);
+		scene->getBat()->move(-15.0f*dt);
 		break;
 	case GLUT_KEY_RIGHT:
-		scene->getBat()->move(0.05);
+		scene->getBat()->move(15.0f*dt);
 		break;
 	}
 }
