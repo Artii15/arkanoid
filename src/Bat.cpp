@@ -16,3 +16,7 @@ Bat& Bat::setDirection(float x){
 	
 	return *(this);
 }
+
+const glm::vec3& Bat::getDirection(){
+	return this->direction;
+}

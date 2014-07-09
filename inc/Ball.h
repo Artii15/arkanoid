@@ -19,6 +19,7 @@ class Ball: public Drawable{
 		float getRadius(); // W przestrzeni świata
 		glm::vec4 getCenter(); // W przestrzeni świata
 		Ball& bounce(glm::vec4* rect);
+		Ball& setSummaryDirection(glm::vec3 dir); // Oblicza wektor wypadkowy na podstawie swojego wektora i podanego w parametrze
 };
 
 #endif

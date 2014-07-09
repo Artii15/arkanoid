@@ -102,3 +102,9 @@ Ball& Ball::bounce(glm::vec4* rect){
 	
 	return *(this);
 }
+
+Ball& Ball::setSummaryDirection(glm::vec3 dir){
+	this->direction = this->direction+dir;
+	
+	return *(this);
+}

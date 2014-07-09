@@ -77,7 +77,7 @@ int Scene::run(const glm::mat4& v, const glm::mat4& p){
 	}
 	if(this->balls.size() > 0){
 		if(this->balls[0] != NULL ){
-			this->balls[0]->move(5.0f);
+			this->balls[0]->move(10.0f);
 			this->balls[0]->draw(v,p,this->lights);
 		}
 	}
@@ -105,6 +105,7 @@ bool Scene::checkBallCollision(){
 	// Kolizja z paletką
 	glm::vec4* bat_coords = this->bat->getCoordinates2D();
 	if(this->checkBallCollision(bat_coords, radius, ball_center)){
+		this->balls[0]->setSummaryDirection(this->bat->getDirection());
 		this->balls[0]->bounce(bat_coords);
 		delete bat_coords;
 		return true;

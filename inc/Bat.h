@@ -12,6 +12,7 @@ class Bat : public Drawable{
 		~Bat();
 		Bat& move();
 		Bat& setDirection(float x);
+		const glm::vec3& getDirection();
 };
 
 #endif
