@@ -56,26 +56,41 @@ glm::vec4 Ball::getCenter(){
 Ball& Ball::bounce(glm::vec4* rect){
 	glm::vec4 center_world = this->model_matrix*this->center;
 	float radius_world = this->model_matrix[0][0]*this->radius;
-	glm::vec4 segment[2];
+	glm::vec3 normal;
 	
 	if( center_world[0] + radius_world >= rect[0][0] && center_world[0] + radius_world <= rect[1][0] 
 		&& center_world[1]+radius_world<=rect[0][1] && center_world[1]-radius_world>=rect[2][1]){
 
-		segment[0] = rect[0];
-		segment[1] = rect[3];
+		normal = glm::vec3(-1,0,0);
 	}
 	else if( center_world[1]-radius_world<=rect[0][1] && center_world[1]-radius_world>rect[2][1] 
 			&& center_world[0]-radius_world>=rect[0][0] && center_world[0]+radius_world<=rect[1][1]){
 		
-		segment[0] = rect[0];
-		segment[1] = rect[1];
+		normal = glm::vec3(0,1,0);
 	}
 	else if( center_world[0]-radius_world<=rect[1][0] && center_world[0]-radius_world>=rect[0][0] &&
 			center_world[1]+radius_world<=rect[0][1] && center_world[1]-radius_world>=rect[2][1] ){
 		
-		segment[0] = rect[1];
-		segment[1] = rect[2];
+		normal = glm::vec3(1,0,0);
 	}
+	else if( center_world[1]+radius_world>=rect[2][1] && center_world[1]+radius_world<=rect[0][1] &&
+			center_world[0]+radius_world<=rect[1][0] && center_world[0]-radius_world>=rect[0][0] ){
+		
+		normal = glm::vec3(0,-1,0);		
+	}
+	else if(center_world[0]<=rect[0][0]){
+		normal = glm::vec3(-1,0,0);
+	}
+	else if(center_world[0]>=rect[1][0]){
+		normal = glm::vec3(1,0,0);
+	}
+	else if(center_world[1]>=rect[0][1]){
+		normal = glm::vec3(0,1,0);
+	}
+	else{
+		normal = glm::vec3(0,-1,0);
+	}
+	this->direction = glm::reflect(this->direction, normal);
 	
 	return *(this);
 }
