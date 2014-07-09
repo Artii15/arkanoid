@@ -48,7 +48,9 @@ Scene& Scene::setBat(Bat* b){
 	
 	return *(this);
 }
-
+Bat* Scene::getBat(){
+	return this->bat;
+}
 Scene& Scene::addBall(Ball* b){
 	this->balls.push_back(b);
 	

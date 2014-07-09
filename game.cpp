@@ -15,6 +15,9 @@
 #include "inc/light.h"
 
 using namespace std;
+float cam_x = 0;
+float cam_y = 0;
+float cam_z = 0;
 
 //Ustawienia okna i rzutowania
 int windowPositionX = 100;
@@ -57,6 +60,32 @@ void displayFrame() {
 	glutSwapBuffers();
 }
 
+void keyDown(int c, int x, int y) {
+	switch (c) {
+	case GLUT_KEY_F1:
+		cam_x = cam_x + 0.1;
+		break;
+	case GLUT_KEY_F2:
+		cam_x = cam_x - 0.1;
+		break;
+	case GLUT_KEY_F3:
+		cam_z = cam_z + 0.1;
+		break;
+	case GLUT_KEY_F4:
+		cam_z = cam_z - 0.1;
+		break;
+	case GLUT_KEY_LEFT:
+		scene->getBat()->move(-0.05);
+		break;
+	case GLUT_KEY_RIGHT:
+		scene->getBat()->move(0.05);
+		break;
+	}
+}
+
+void keyUp(int c, int x, int y) {
+	
+}
 //Procedura inicjująca biblotekę glut
 void initGLUT(int *argc, char** argv) {
 	glutInit(argc,argv); //Zainicjuj bibliotekę GLUT
@@ -71,6 +100,9 @@ void initGLUT(int *argc, char** argv) {
 	glutIdleFunc(nextFrame); //Zarejestruj procedurę nextFrame jako procedurę wywoływanš najczęścięj jak się da (animacja)
 	
 	glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_CONTINUE_EXECUTION); // Dla zwalniania zasobów
+	
+	glutSpecialFunc(keyDown);
+	glutSpecialUpFunc(keyUp);
 }
 
 int main(int argc, char** argv)

@@ -3,9 +3,11 @@
 
 #include "Drawable.h"
 
-class Bat: public Drawable{
-	public:
-		virtual ~Bat();
+class Bat : public Drawable{
+public:
+	Bat();
+	~Bat();
+	Bat& Bat::move(float x);
 };
 
 #endif
