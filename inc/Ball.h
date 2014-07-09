@@ -9,7 +9,6 @@ class Ball: public Drawable{
 		float time;
 		glm::vec4 center;
 		float radius;
-		
 		Ball& recalculateDimensions();
 		
 	public:
@@ -19,6 +18,7 @@ class Ball: public Drawable{
 		virtual Drawable& loadObj(const char *path);
 		float getRadius(); // W przestrzeni świata
 		glm::vec4 getCenter(); // W przestrzeni świata
+		Ball& bounce(glm::vec4* rect);
 };
 
 #endif
