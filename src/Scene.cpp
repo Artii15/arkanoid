@@ -4,6 +4,8 @@ Scene::Scene(short max_hits_count){
 	this->box = NULL;
 	this->bat = NULL;
 	this->max_hits_count = max_hits_count;
+	this->was_ball_block_collision = false;
+	this->was_ball_bat_collision = false;
 }
 
 Scene::~Scene(){
@@ -107,12 +109,18 @@ bool Scene::checkBallCollision(){
 	// Kolizja z paletką
 	glm::vec4* bat_coords = this->bat->getCoordinates2D();
 	if(this->checkBallCollision(bat_coords, radius, ball_center)){
-		this->balls[0]->setSummaryDirection(this->bat->getDirection());
-		this->balls[0]->bounce(bat_coords);
+		if(!this->was_ball_bat_collision){
+			this->balls[0]->setSummaryDirection(this->bat->getDirection());
+			this->balls[0]->bounce(bat_coords);
+		}
+		this->was_ball_bat_collision = true;
 		delete bat_coords;
 		return true;
 	}
-	delete bat_coords;
+	else{
+		this->was_ball_bat_collision = false;
+		delete bat_coords;
+	}
 	
 	// Kolizja ze ścianą
 	glm::vec4* wall_coords = this->box->getCoordinates2D();
@@ -144,18 +152,24 @@ bool Scene::checkBallCollision(){
 		}
 		glm::vec4* block_coords = this->blocks[i]->getCoordinates2D();
 		if(this->checkBallCollision(block_coords, radius, ball_center)){
-			this->balls[0]->bounce(block_coords);
-			delete block_coords;
-			if(this->blocks[i]->hit().getHitsCount() >= this->max_hits_count){
-				Block* tmp = this->blocks[i];
-				this->blocks[i] = this->blocks[this->blocks.size()-1];
-				this->blocks[this->blocks.size()-1] = tmp;
-				delete tmp;
-				this->blocks.pop_back();
+			if(!this->was_ball_block_collision){
+				this->balls[0]->bounce(block_coords);
+				if(this->blocks[i]->hit().getHitsCount() >= this->max_hits_count){
+					Block* tmp = this->blocks[i];
+					this->blocks[i] = this->blocks[this->blocks.size()-1];
+					this->blocks[this->blocks.size()-1] = tmp;
+					delete tmp;
+					this->blocks.pop_back();
+				}
 			}
+			delete block_coords;
+			this->was_ball_block_collision = true;
 			return true;		
 		}
-		delete block_coords;
+		else{
+			this->was_ball_block_collision = false;
+			delete block_coords;
+		}
 	}
 	
 	return false;;

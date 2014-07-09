@@ -55,43 +55,40 @@ glm::vec4 Ball::getCenter(){
 
 Ball& Ball::bounce(glm::vec4* rect){
 	glm::vec4 center_world = this->model_matrix*this->center;
-	float radius_world = this->model_matrix[0][0]*this->radius;
 	glm::vec3 normal;
 	
-	if( center_world[0] + radius_world >= rect[0][0] && center_world[0] + radius_world <= rect[1][0] 
-		&& center_world[1]+radius_world<=rect[0][1] && center_world[1]-radius_world>=rect[2][1]){
-
-		normal = glm::vec3(-1,0,0);
-	}
-	else if( center_world[1]-radius_world<=rect[0][1] && center_world[1]-radius_world>rect[2][1] 
-			&& center_world[0]-radius_world>=rect[0][0] && center_world[0]+radius_world<=rect[1][1]){
-		
-		normal = glm::vec3(0,1,0);
-	}
-	else if( center_world[0]-radius_world<=rect[1][0] && center_world[0]-radius_world>=rect[0][0] &&
-			center_world[1]+radius_world<=rect[0][1] && center_world[1]-radius_world>=rect[2][1] ){
-		
-		normal = glm::vec3(1,0,0);
-	}
-	else if( center_world[1]+radius_world>=rect[2][1] && center_world[1]+radius_world<=rect[0][1] &&
-			center_world[0]+radius_world<=rect[1][0] && center_world[0]-radius_world>=rect[0][0] ){
-		
-		normal = glm::vec3(0,-1,0);		
-	}
-	else if(center_world[0]<=rect[0][0]){
-		normal = glm::vec3(-1,0,0);
-	}
-	else if(center_world[0]>=rect[1][0]){
-		normal = glm::vec3(1,0,0);
-	}
-	else if(center_world[1]>=rect[0][1]){
-		normal = glm::vec3(0,1,0);
-	}
-	else{
-		normal = glm::vec3(0,-1,0);
-	}
+	float distances[4];
+	distances[0] = rect[0][0]-center_world[0]; // Od lewej ściany
+	distances[1] = center_world[1]-rect[0][1]; // Od górnej ściany
+	distances[2] = center_world[0]-rect[1][0]; // Od prawej ściany
+	distances[3] = rect[2][1]-center_world[1]; // Od dolnej ściany
 	
-	this->direction = glm::reflect(this->direction, normal);
+	short min_index = 0;
+	float min = distances[0];
+	
+	for(short i=1; i<4; i++){
+		if(distances[i] >= 0 && (distances[i]<min || min<0)){
+			min = distances[i];
+			min_index = i;
+		}
+	}
+	switch(min_index){
+		case 0:
+			normal = glm::vec3(-1,0,0);
+			break;
+		case 1:
+			normal = glm::vec3(0,1,0);
+			break;
+		case 2:
+			normal = glm::vec3(1,0,0);
+			break;
+		case 3:
+			normal = glm::vec3(0,-1,0);
+			break;
+	}
+	if(glm::dot(this->direction, normal) < 0){
+		this->direction = glm::reflect(this->direction, normal);
+	}
 	
 	return *(this);
 }

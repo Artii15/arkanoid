@@ -30,6 +30,8 @@ class Scene{
 		std::vector<Block*> blocks;
 		std::vector<Ball*> balls;
 		short max_hits_count;
+		bool was_ball_block_collision;
+		bool was_ball_bat_collision;
 };
 
 #endif
