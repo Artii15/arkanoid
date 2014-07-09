@@ -10,6 +10,7 @@ class Ball: public Drawable{
 		glm::vec4 center;
 		float radius;
 		Ball& recalculateDimensions();
+		std::string cracked_texture_path;
 		
 	public:
 		Ball();
@@ -20,6 +21,7 @@ class Ball: public Drawable{
 		glm::vec4 getCenter(); // W przestrzeni świata
 		Ball& bounce(glm::vec4* rect);
 		Ball& setSummaryDirection(glm::vec3 dir); // Oblicza wektor wypadkowy na podstawie swojego wektora i podanego w parametrze
+		Ball& bounce(glm::vec3 normal);
 };
 
 #endif

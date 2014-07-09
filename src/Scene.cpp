@@ -1,8 +1,9 @@
 #include "../inc/Scene.h"
 
-Scene::Scene(){
+Scene::Scene(short max_hits_count){
 	this->box = NULL;
 	this->bat = NULL;
+	this->max_hits_count = max_hits_count;
 }
 
 Scene::~Scene(){
@@ -114,12 +115,25 @@ bool Scene::checkBallCollision(){
 	
 	// Kolizja ze ścianą
 	glm::vec4* wall_coords = this->box->getCoordinates2D();
-	if( ball_center[0] - wall_coords[0][0] <= radius || wall_coords[1][0] - ball_center[0] <= radius || 
-		wall_coords[0][1] - ball_center[1] <= radius || ball_center[1] - wall_coords[2][1] <= radius ){
-
+	if( ball_center[0] - wall_coords[0][0] <= radius ){
+		this->balls[0]->bounce(glm::vec3(1,0,0));
 		delete wall_coords;
-		return true;	
+		return true;
 	}
+	else if (wall_coords[1][0] - ball_center[0] <= radius){
+		this->balls[0]->bounce(glm::vec3(-1,0,0));
+		delete wall_coords;
+		return true;
+	}else if(wall_coords[0][1] - ball_center[1] <= radius){
+		this->balls[0]->bounce(glm::vec3(0,-1,0));
+		delete wall_coords;
+		return true;
+	}
+	else if(ball_center[1] - wall_coords[2][1] <= radius){
+		this->balls[0]->bounce(glm::vec3(0,1,0));
+		delete wall_coords;
+		return true;
+	} 
 	delete wall_coords;
 	
 	// Sprawdzanie kolizji z blokami
@@ -131,6 +145,13 @@ bool Scene::checkBallCollision(){
 		if(this->checkBallCollision(block_coords, radius, ball_center)){
 			this->balls[0]->bounce(block_coords);
 			delete block_coords;
+			if(this->blocks[i]->hit().getHitsCount() >= this->max_hits_count){
+				Block* tmp = this->blocks[i];
+				this->blocks[i] = this->blocks[this->blocks.size()-1];
+				this->blocks[this->blocks.size()-1] = tmp;
+				delete tmp;
+				this->blocks.pop_back();
+			}
 			return true;		
 		}
 		delete block_coords;
