@@ -98,15 +98,26 @@ Drawable* Scene::checkBallCollision(){
 	}
 	glm::vec4 ball_center = this->balls[0]->getCenter();
 	float radius = this->balls[0]->getRadius();
+	
+	// Kolizja z paletką
+	if(this->checkBallCollision(this->bat, radius, ball_center)){
+		return bat;
+	}
+	// Kolizja ze ścianą
+	glm::vec4* wall_coords = this->box->getCoordinates2D();
+	if( ball_center[0] - wall_coords[0][0] <= radius || wall_coords[1][0] - ball_center[0] <= radius || 
+		wall_coords[0][1] - ball_center[1] <= radius || ball_center[1] - wall_coords[2][1] <= radius ){
+
+		delete wall_coords;
+		return this->box;	
+	}
+	delete wall_coords;
+	
 	// Sprawdzanie kolizji z blokami
 	for(unsigned int i=0; i<this->blocks.size(); i++){
 		if(this->checkBallCollision(this->blocks[i], radius, ball_center)){
-			std::cout << "Kolizja" << std::endl;		
+			return this->blocks[i];		
 		}
-	}
-	// Kolizja z paletką
-	if(this->checkBallCollision(this->bat, radius, ball_center)){
-		std::cout << "Kolizja" << std::endl;		
 	}
 	
 	return NULL;

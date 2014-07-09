@@ -1,7 +1,7 @@
 #include "../inc/Ball.h"
 
 Ball::Ball(){
-	this->direction = glm::vec3(0, -1, 0);
+	this->direction = glm::vec3(1, 0, 0);
 	this->time = glutGet(GLUT_ELAPSED_TIME);
 	this->center = glm::vec4(0,0,0,1);
 	this->radius = 0;
