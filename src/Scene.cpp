@@ -1,6 +1,6 @@
 #include "../inc/Scene.h"
 
-Scene::Scene(short max_hits_count){
+Scene::Scene(unsigned int max_hits_count){
 	this->box = NULL;
 	this->bat = NULL;
 	this->max_hits_count = max_hits_count;

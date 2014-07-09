@@ -198,7 +198,8 @@ void initObjects(){
 			b->setAmbientTexture(b->getTextures().diffuse, b->getSamplers().diffuse);
 			b->setSpecularTexture(b->getTextures().diffuse, b->getSamplers().diffuse);
 			b->setModelMatrix(m_matrix);
-			b->setCrackedTexturePath("textures/fire_cracked.tga");
+			b->addCrackedTexturePath("textures/fire_cracked.tga");
+			b->addCrackedTexturePath("textures/fire_cracked2.tga");
 			scene->addBlock(b);
 			m_matrix = glm::translate(m_matrix, glm::vec3(1.1f, 0, 0));
 		}

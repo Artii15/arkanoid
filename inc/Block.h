@@ -5,14 +5,14 @@
 
 class Block: public Drawable{
 	protected:
-		short hits_count;
-		std::string cracked_texture_path;
+		unsigned int hits_count;
+		std::vector<std::string> cracked_texture_paths;
 	public:
 		virtual ~Block();
 		Block();
-		short getHitsCount();
+		unsigned int getHitsCount();
 		Block& hit();
-		Block& setCrackedTexturePath(const char *path);
+		Block& addCrackedTexturePath(const char *path);
 };
 
 #endif

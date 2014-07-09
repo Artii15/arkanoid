@@ -3,27 +3,25 @@
 Block::~Block(){}
 Block::Block(){
 	this->hits_count = 0;
-	this->cracked_texture_path = "";
 }
 
-Block& Block::setCrackedTexturePath(const char *path){
-	this->cracked_texture_path = path;
+Block& Block::addCrackedTexturePath(const char *path){
+	this->cracked_texture_paths.push_back(path);
 	
 	return *(this);
 }
 
 Block& Block::hit(){
-	if(this->hits_count == 0 && this->cracked_texture_path != ""){
-		this->setDiffuseTexture(this->cracked_texture_path.c_str());
+	this->hits_count++;
+	if(this->cracked_texture_paths.size() >= this->hits_count){
+		this->setDiffuseTexture(this->cracked_texture_paths[hits_count-1].c_str());
 		this->setAmbientTexture(this->getTextures().diffuse, this->getSamplers().diffuse);
 		this->setSpecularTexture(this->getTextures().diffuse, this->getSamplers().diffuse);
 	}
 	
-	this->hits_count++;
-	
 	return *(this);
 }
 
-short Block::getHitsCount(){
+unsigned int Block::getHitsCount(){
 	return this->hits_count;
 }

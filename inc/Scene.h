@@ -10,7 +10,7 @@
 
 class Scene{
 	public:
-		Scene(short max_hits_count = 3);
+		Scene(unsigned int max_hits_count = 3);
 		~Scene();
 		Scene& addLight(struct light *l);
 		Scene& addBlock(Block* b);
@@ -29,7 +29,7 @@ class Scene{
 		Bat* bat;
 		std::vector<Block*> blocks;
 		std::vector<Ball*> balls;
-		short max_hits_count;
+		unsigned int max_hits_count;
 		std::vector<bool> was_ball_block_collision;
 		bool was_ball_wall_collision[4];
 		bool was_ball_bat_collision;
