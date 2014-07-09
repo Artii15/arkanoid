@@ -89,3 +89,41 @@ int Scene::run(const glm::mat4& v, const glm::mat4& p){
 	}
 	return 0;
 }
+
+Drawable* Scene::checkBallCollision(){
+	if(this->balls[0] == NULL){
+		return NULL;
+	}
+	glm::vec4 ball_center = this->balls[0]->getCenter();
+	float radius = this->balls[0]->getRadius();
+	// Sprawdzanie kolizji z blokami
+	for(unsigned int i=0; i<this->blocks.size(); i++){
+		if(this->checkBallCollision(this->blocks[i], radius, ball_center)){
+			
+		}
+	}
+	return NULL;
+}
+
+bool Scene::checkBallCollision(Drawable *obj, float radius, glm::vec4& center){
+	if(obj == NULL){
+		return false;
+	}
+	float d = 0;
+	glm::vec4 *coords = obj->getCoordinates2D();
+	for(short i=0; i<2; i++){
+		if(center[i] < coords[3][i]){
+			float e = center[i] - coords[3][i];
+			d += e*e;
+		}
+		else if(center[i] > coords[1][i]){
+			float e = center[i] - coords[1][i];
+			d += e*e;
+		}
+	}
+	delete coords;
+	if(d <= radius*radius){
+		return true;	
+	}
+	return false;
+}

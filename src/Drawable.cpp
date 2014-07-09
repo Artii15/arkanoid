@@ -10,7 +10,7 @@ Drawable::Drawable(){
 	this->shader_program = 0;
 	this->model_matrix = glm::mat4(1.0f);
 	for(short i=0; i<4; i++){
-		this->coordinates_2D[0] = glm::vec3(0,0,1);
+		this->coordinates_2D[0] = glm::vec4(0,0,0,1);
 	}
 	
 	// Tworzenie VAO
@@ -206,12 +206,20 @@ Drawable& Drawable::recalculateCoordinates2D(){
 			minY = this->vertices->at(i).operator[](1);
 		}
 	}
-	this->coordinates_2D[0] = glm::vec3(minX, maxY, 1);
-	this->coordinates_2D[1] = glm::vec3(maxX, maxY, 1);
-	this->coordinates_2D[2] = glm::vec3(maxX, minY, 1);
-	this->coordinates_2D[3] = glm::vec3(minX, minY, 1);
+	this->coordinates_2D[0] = glm::vec4(minX, maxY, 0, 1);
+	this->coordinates_2D[1] = glm::vec4(maxX, maxY, 0, 1);
+	this->coordinates_2D[2] = glm::vec4(maxX, minY, 0, 1);
+	this->coordinates_2D[3] = glm::vec4(minX, minY, 0, 1);
 	
 	return *(this);
+}
+
+glm::vec4* Drawable::getCoordinates2D(){
+	glm::vec4* coords = new glm::vec4[4];
+	for(short i=0; i<4; i++){
+		coords[i] = this->model_matrix*this->coordinates_2D[i];
+	}
+	return coords;
 }
 
 Drawable& Drawable::loadObj(const char *path){

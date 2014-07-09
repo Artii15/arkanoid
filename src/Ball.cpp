@@ -44,3 +44,11 @@ Drawable& Ball::loadObj(const char *path){
 	
 	return *(this);
 }
+
+float Ball::getRadius(){
+	// Zakładając że skalowanie jest zawsze proporcjonalne, dla kuli inne jest bez sensu
+	return this->radius*this->model_matrix[0][0];
+}
+glm::vec4 Ball::getCenter(){
+	return	this->model_matrix*this->center;
+}

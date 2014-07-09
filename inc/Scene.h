@@ -18,6 +18,8 @@ class Scene{
 		Scene& addBall(Ball* b);
 		Scene& setBox(Drawable* b);
 		int run(const glm::mat4& v, const glm::mat4& p);
+		Drawable* checkBallCollision(); // Zwraca wskaźnik do obiektu z którym doszło do kolizji
+		bool checkBallCollision(Drawable *obj, float radius, glm::vec4& center);
 		
 	private:
 		std::vector<struct light*> lights; // Oświetlenie sceny

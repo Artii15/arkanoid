@@ -45,7 +45,7 @@ class Drawable{
 		// pierwsze pole tablicy - lewy górny róg, druga - prawy górny, ostatnia - lewy dolny
 		// Służy do określania współrzędnych prostokąta otaczającego obiekt w przestrzeni 2D
 		// Używane do detekcji kolizji
-		glm::vec3 coordinates_2D[4]; 
+		glm::vec4 coordinates_2D[4]; 
 		GLuint shader_program;
 		glm::mat4 model_matrix;
 		GLuint vao;
@@ -58,7 +58,6 @@ class Drawable{
 		Drawable& setTextureUniforms();
 		Drawable& setLightUniforms(const std::vector<struct light*>& lights);
 		Drawable& recalculateCoordinates2D();
-		const glm::vec3* getCoordinates2D(); // Zwrócone w przestrzeni świata
 	
 	public:
 		Drawable();
@@ -79,6 +78,7 @@ class Drawable{
 		const struct materials_samplers& getSamplers();
 		const glm::mat4& getModelMatrix();
 		Drawable& setModelMatrix(const glm::mat4 &m);
+		glm::vec4* getCoordinates2D(); // Zwrócone w przestrzeni świata, zwalniać pamięć po zwróconej przez nią tablicy!
 };
 
 #endif
