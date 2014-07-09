@@ -120,7 +120,7 @@ void initObjects(){
 		Ball *b = new Ball();
 		b->loadShaders("shaders/vertex/bat.txt", "shaders/fragment/bat.txt");
 		b->loadObj("models/sphere.obj");
-		b->setDiffuseTexture("textures/fire.tga");
+		b->setDiffuseTexture("textures/golf_ball.tga");
 		b->setAmbientTexture(b->getTextures().diffuse, b->getSamplers().diffuse);
 		b->setSpecularTexture(b->getTextures().diffuse, b->getSamplers().diffuse);
 		b->setModelMatrix(glm::scale(b->getModelMatrix(), glm::vec3(0.5f, 0.5f, 0.5f)));

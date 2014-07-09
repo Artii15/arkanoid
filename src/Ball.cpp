@@ -33,9 +33,6 @@ Ball& Ball::recalculateDimensions(){
 	this->center = start_point + (farthest_point-start_point)/2.0f;
 	this->radius = diameter/2.0f;
 	
-	std::cout << radius << std::endl;
-	std::cout << center[0] << " " << center[1] << " " << center[2] << " " << center[3] << std::endl;
-	
 	return *(this);
 }
 

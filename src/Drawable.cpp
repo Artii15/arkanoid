@@ -9,6 +9,9 @@ Drawable::Drawable(){
 
 	this->shader_program = 0;
 	this->model_matrix = glm::mat4(1.0f);
+	for(short i=0; i<4; i++){
+		this->coordinates_2D[0] = glm::vec3(0,0,1);
+	}
 	
 	// Tworzenie VAO
 	glGenVertexArrays(1, &(this->vao) );
@@ -183,6 +186,34 @@ GLuint Drawable::getShaderProgram(){
 	return this->shader_program;
 }
 
+Drawable& Drawable::recalculateCoordinates2D(){
+	float maxX = 0.0f;
+	float minX = 0.0f;
+	float maxY = 0.0f;
+	float minY = 0.0f;
+	
+	for(unsigned int i=0; i<this->vertices->size(); i++){
+		if(this->vertices->at(i).operator[](0) > maxX){
+			maxX = this->vertices->at(i).operator[](0);
+		}
+		if(this->vertices->at(i).operator[](0) < minX){
+			minX = this->vertices->at(i).operator[](0);
+		}
+		if(this->vertices->at(i).operator[](1) > maxY){
+			maxY = this->vertices->at(i).operator[](1);
+		}
+		if(this->vertices->at(i).operator[](1) < minY){
+			minY = this->vertices->at(i).operator[](1);
+		}
+	}
+	this->coordinates_2D[0] = glm::vec3(minX, maxY, 1);
+	this->coordinates_2D[1] = glm::vec3(maxX, maxY, 1);
+	this->coordinates_2D[2] = glm::vec3(maxX, minY, 1);
+	this->coordinates_2D[3] = glm::vec3(minX, minY, 1);
+	
+	return *(this);
+}
+
 Drawable& Drawable::loadObj(const char *path){
 	
 	if( !this->shaders_loaded ){
@@ -222,6 +253,8 @@ Drawable& Drawable::loadObj(const char *path){
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, i_buf);
 	
 	glBindVertexArray(0);
+	
+	this->recalculateCoordinates2D();
 	
 	return *(this);
 }
