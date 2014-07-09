@@ -4,10 +4,14 @@
 #include "Drawable.h"
 
 class Bat : public Drawable{
-public:
-	Bat();
-	~Bat();
-	Bat& move(float x);
+	protected: 
+		glm::vec3 direction;	
+	
+	public:
+		Bat();
+		~Bat();
+		Bat& move();
+		Bat& setDirection(float x);
 };
 
 #endif

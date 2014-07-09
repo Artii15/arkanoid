@@ -1,12 +1,18 @@
 #include "../inc/Bat.h"
 
 Bat::Bat(){
-
+	this->direction = glm::vec3(0,0,0);
 }
 
-Bat::~Bat(){
+Bat::~Bat(){}
+
+Bat& Bat::move(){
+	this->model_matrix = glm::translate(this->model_matrix, this->direction);
+	return *(this);
 }
-Bat& Bat::move(float x){
-	model_matrix = glm::translate(model_matrix, glm::vec3(x, 0.0f, 0.0f));
+
+Bat& Bat::setDirection(float x){
+	this->direction[0] = x;
+	
 	return *(this);
 }

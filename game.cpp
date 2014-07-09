@@ -80,16 +80,23 @@ void keyDown(int c, int x, int y) {
 		cam_z = cam_z - 10.0f*dt;
 		break;
 	case GLUT_KEY_LEFT:
-		scene->getBat()->move(-15.0f*dt);
+		scene->getBat()->setDirection(-5.0f*dt);
 		break;
 	case GLUT_KEY_RIGHT:
-		scene->getBat()->move(15.0f*dt);
+		scene->getBat()->setDirection(5.0f*dt);
 		break;
 	}
 }
 
 void keyUp(int c, int x, int y) {
-	
+	switch (c){
+		case GLUT_KEY_LEFT:
+			scene->getBat()->setDirection(0);
+			break;
+		case GLUT_KEY_RIGHT:
+			scene->getBat()->setDirection(0);
+			break;
+	}	
 }
 //Procedura inicjująca biblotekę glut
 void initGLUT(int *argc, char** argv) {
