@@ -87,21 +87,28 @@ int Scene::run(const glm::mat4& v, const glm::mat4& p){
 			this->blocks[i]->draw(v,p,this->lights);
 		}
 	}
+	this->checkBallCollision();
+	
 	return 0;
 }
 
 Drawable* Scene::checkBallCollision(){
-	if(this->balls[0] == NULL){
-		return NULL;
+	if(this->balls[0] == NULL || this->bat == NULL || this->box == NULL){
+		return NULL; // Scena niekompletna, więc nie sprawdzamy kolizji
 	}
 	glm::vec4 ball_center = this->balls[0]->getCenter();
 	float radius = this->balls[0]->getRadius();
 	// Sprawdzanie kolizji z blokami
 	for(unsigned int i=0; i<this->blocks.size(); i++){
 		if(this->checkBallCollision(this->blocks[i], radius, ball_center)){
-			
+			std::cout << "Kolizja" << std::endl;		
 		}
 	}
+	// Kolizja z paletką
+	if(this->checkBallCollision(this->bat, radius, ball_center)){
+		std::cout << "Kolizja" << std::endl;		
+	}
+	
 	return NULL;
 }
 
