@@ -55,9 +55,14 @@ void displayFrame() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	//Wylicz macierz rzutowania
-	glm::mat4 p = glm::perspective(0.785f, windowWidth/windowHeight, 1.0f, 100.0f);
+	glm::mat4 p = glm::perspective(0.785f, windowWidth/windowHeight, 0.1f, 100.0f);
 	//Wylicz macierz widoku
-	glm::mat4 v = glm::lookAt(glm::vec3(cam_x,cam_y,cam_z),glm::vec3(0.0f,0.0f,0.0f),glm::vec3(0.0f,1.0f,0.0f)); 
+	glm::vec3 observer_position = glm::vec3(cam_x,cam_y,cam_z);
+	glm::vec3 look_at_position = glm::vec3(0.0f,0.0f,0.0f);
+	if(observer_position == look_at_position){
+		observer_position[2] += 0.1f;
+	}
+	glm::mat4 v = glm::lookAt(observer_position,look_at_position,glm::vec3(0.0f,1.0f,0.0f)); 
 	
 	scene->run(v, p);
 	
@@ -68,16 +73,16 @@ void displayFrame() {
 void keyDown(int c, int x, int y) {
 	switch (c) {
 	case GLUT_KEY_F1:
-		cam_x = cam_x + 10.0f;
+		cam_x = cam_x + 1.0f;
 		break;
 	case GLUT_KEY_F2:
-		cam_x = cam_x - 10.0f;
+		cam_x = cam_x - 1.0f;
 		break;
 	case GLUT_KEY_F3:
-		cam_z = cam_z + 10.0f;
+		cam_z = cam_z + 1.0f;
 		break;
 	case GLUT_KEY_F4:
-		cam_z = cam_z - 10.0f;
+		cam_z = cam_z - 1.0f;
 		break;
 	case GLUT_KEY_LEFT:
 		scene->getBat()->setDirection(-10.0f);
