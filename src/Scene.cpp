@@ -173,7 +173,9 @@ bool Scene::checkBallCollision(){
 			this->balls.pop_back();
 			delete wall_coords;
 			this->was_ball_wall_collision[3] = true;
-			this->balls[0]->resetTimer();
+			if(this->balls.size() > 0){
+				this->balls[0]->resetTimer();
+			}
 			return true;
 		}
 	}
