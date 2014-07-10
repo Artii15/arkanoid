@@ -102,13 +102,12 @@ int Scene::run(const glm::mat4& v, const glm::mat4& p, bool started){
 	if(this->balls.size() <= 0 || this->blocks.size() <= 0){
 		return 1;
 	}
-	else{
-		return 0;
-	}
+	return 0;
+
 }
 
 bool Scene::checkBallCollision(){
-	if(this->balls[0] == NULL || this->bat == NULL || this->box == NULL){
+	if(this->balls.size() <= 0 || this->bat == NULL || this->box == NULL){
 		return false; // Scena niekompletna, więc nie sprawdzamy kolizji
 	}
 	glm::vec4 ball_center = this->balls[0]->getCenter();
