@@ -200,9 +200,9 @@ bool Scene::checkBallCollision(){
 					this->was_ball_block_collision[i] = this->was_ball_block_collision[this->was_ball_block_collision.size()-1];
 					this->was_ball_block_collision.pop_back();
 				}
-			}
-			else{
-				this->was_ball_block_collision[i] = true;
+				else{
+					this->was_ball_block_collision[i] = true;
+				}
 			}
 			delete block_coords;
 			return true;		
