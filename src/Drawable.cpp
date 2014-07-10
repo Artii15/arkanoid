@@ -421,27 +421,18 @@ Drawable& Drawable::setDiffuseTexture(const char* filename){
 }
 
 Drawable& Drawable::setAmbientTexture(GLuint tex, GLuint sampler_nr){
-	if(this->textures.ambient != 0){
-		glDeleteTextures(1, &(this->textures.ambient));
-	}
 	this->textures.ambient = tex;
 	this->samplers.ambient = sampler_nr;
 	return *(this);
 }
 
 Drawable& Drawable::setSpecularTexture(GLuint tex, GLuint sampler_nr){
-	if(this->textures.specular != 0){
-		glDeleteTextures(1, &(this->textures.specular));
-	}
 	this->textures.specular = tex;
 	this->samplers.specular = sampler_nr;
 	return *(this);
 }
 
 Drawable& Drawable::setDiffuseTexture(GLuint tex, GLuint sampler_nr){
-	if(this->textures.diffuse != 0){
-		glDeleteTextures(1, &(this->textures.diffuse));
-	}
 	this->textures.diffuse = tex;
 	this->samplers.diffuse = sampler_nr;
 	return *(this);
