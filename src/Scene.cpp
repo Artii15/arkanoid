@@ -8,7 +8,6 @@ Scene::Scene(unsigned int max_hits_count){
 	for(short i=0; i < 4; i++){
 		this->was_ball_wall_collision[i] = false;
 	}
-	this->scene_drawed = false;
 }
 
 Scene::~Scene(){
@@ -76,7 +75,7 @@ Scene& Scene::addLight(struct light *l){
 	return *(this);
 }
 
-int Scene::run(const glm::mat4& v, const glm::mat4& p){
+int Scene::run(const glm::mat4& v, const glm::mat4& p, bool started){
 	if(this->box != NULL){
 		this->box->draw(v,p,this->lights);
 	}
@@ -87,11 +86,10 @@ int Scene::run(const glm::mat4& v, const glm::mat4& p){
 	}
 	
 	if(this->balls.size() > 0){
-		if(!this->scene_drawed){
-			this->scene_drawed = true;
+		if(!started){
 			this->balls[0]->resetTimer();
 		}
-		this->balls[0]->move(20.0f);
+		this->balls[0]->move(25.0f);
 		this->balls[0]->draw(v,p,this->lights);
 	}
 	for(unsigned int i=0; i < this->blocks.size(); i++){
@@ -99,10 +97,14 @@ int Scene::run(const glm::mat4& v, const glm::mat4& p){
 			this->blocks[i]->draw(v,p,this->lights);
 		}
 	}
-	this->checkBallCollision();
+	this->checkBallCollision(); // Kolizje kuli ze wszystkim innym
 	this->checkBatCollision(); // Kolizje paletki ze ścianą
-	
-	return 0;
+	if(this->balls.size() <= 0 || this->blocks.size() <= 0){
+		return 1;
+	}
+	else{
+		return 0;
+	}
 }
 
 bool Scene::checkBallCollision(){

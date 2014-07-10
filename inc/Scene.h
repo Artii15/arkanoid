@@ -18,7 +18,7 @@ class Scene{
 		Bat* getBat();
 		Scene& addBall(Ball* b);
 		Scene& setBox(Drawable* b);
-		int run(const glm::mat4& v, const glm::mat4& p);
+		int run(const glm::mat4& v, const glm::mat4& p, bool started);
 		bool checkBallCollision(); // Zwraca wskaźnik do obiektu z którym doszło do kolizji
 		bool checkBallCollision(glm::vec4 *coords, float radius, glm::vec4& center);
 		Scene& checkBatCollision();
@@ -33,7 +33,6 @@ class Scene{
 		std::vector<bool> was_ball_block_collision;
 		bool was_ball_wall_collision[4];
 		bool was_ball_bat_collision;
-		bool scene_drawed;
 };
 
 #endif

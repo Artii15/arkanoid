@@ -17,7 +17,7 @@
 using namespace std;
 float cam_x = 0;
 float cam_y = 0;
-float cam_z = 20.0f;
+float cam_z = 25.0f;
 
 //Ustawienia okna i rzutowania
 int windowPositionX = 100;
@@ -27,6 +27,7 @@ float windowHeight = 600.0f;
 float prev_time = glutGet(GLUT_ELAPSED_TIME);
 float dt = 0.0f;
 Scene *scene;
+bool game_started = false;
 
 //Inicjalizacja obiektów na scenie
 void initObjects();
@@ -64,13 +65,14 @@ void displayFrame() {
 	}
 	glm::mat4 v = glm::lookAt(observer_position,look_at_position,glm::vec3(0.0f,1.0f,0.0f)); 
 	
-	scene->run(v, p);
+	scene->run(v, p, game_started);
 	
 	//Tylny bufor na przedni
 	glutSwapBuffers();
 }
 
 void keyDown(int c, int x, int y) {
+	game_started = true;
 	switch (c) {
 	case GLUT_KEY_F1:
 		cam_x = cam_x + 1.0f;
@@ -141,33 +143,37 @@ int main(int argc, char** argv)
 	
 	glutMainLoop();
 	delete scene;
-	printf("Zamykanie\n"); // Żeby wiedzieć czy włączyła się funkcja clean
+	printf("Zamykanie\n");
 	return 0;
 }
 
 // Nie zwalniać pamięci po inicjalizowanych tutaj obiektach pod warunkiem, że będą podpięte pod obiekt sceny
 void initObjects(){
 	// Światła
-	struct light *l1, *l2;
-	l1 = new struct light();
-	l1->position[2] = 3;
-	l1->position[1] = 5;
-	l1->k = 0.01f;
-	l2 = new struct light();
-	l2->position[2] = 0;
-	l2->position[1] = 0;
-	l2->diffuse[0] = 0;
-	l2->diffuse[1] = 0.5f;
-	l2->diffuse[2] = 1;
-	l2->specular[0] = 1;
-	l2->specular[1] = 1;
-	l2->specular[2] = 1;
-	l2->k = 0.0f;
-	scene->addLight(l1).addLight(l2);
+	struct light* lights[9];
+	for(short i=0; i<9; i++){
+		lights[i] = new struct light();
+		lights[i]->k = 0.02f;
+	}
+	for(short i=0; i<9; i++){
+		scene->addLight(lights[i]);
+	}
+	lights[0]->position = glm::vec4(-9.5f, 8.5f, -12.5f, 1);
+	lights[1]->position = glm::vec4(9.5f, 8.5f, -12.5f, 1);
+	lights[2]->position = glm::vec4(9.5f, 8.5f, 12.5f, 1);
+	lights[3]->position = glm::vec4(-9.5f, 8.5f, 12.5f, 1);
+	lights[4]->position = glm::vec4(-9.5f, -8.5f, -12.5f, 1);
+	lights[5]->position = glm::vec4(9.5f, -8.5f, -12.5f, 1);
+	lights[6]->position = glm::vec4(9.5f, -8.5f, 12.5f, 1);
+	lights[7]->position = glm::vec4(-9.5f, -8.5f, 12.5f, 1);
+	lights[8]->position = glm::vec4(0, 0, 0, 1);
+	lights[8]->k = 0.001f;
+	lights[8]->diffuse = glm::vec4(0.0f, 0.5f, 1.0f, 1);
+	lights[8]->specular = glm::vec4(0.0f, 0.5f, 1.0f, 1);
 	// Piłki
 	for(int i=0; i<3; i++){
 		Ball *b = new Ball();
-		b->loadShaders("shaders/vertex/bat.txt", "shaders/fragment/bat.txt");
+		b->loadShaders("shaders/vertex/default.txt", "shaders/fragment/default.txt");
 		b->loadObj("models/sphere.obj");
 		b->setDiffuseTexture("textures/golf_ball.tga");
 		b->setAmbientTexture(b->getTextures().diffuse, b->getSamplers().diffuse);
@@ -177,16 +183,16 @@ void initObjects(){
 	}
 	// Paletka
 	Bat *bat = new Bat();
-	bat->loadShaders("shaders/vertex/bat.txt", "shaders/fragment/bat.txt");
+	bat->loadShaders("shaders/vertex/default.txt", "shaders/fragment/default.txt");
 	bat->loadObj("models/bat.obj");
 	bat->setDiffuseTexture("textures/metal.tga");
 	bat->setAmbientTexture(bat->getTextures().diffuse, bat->getSamplers().diffuse);
 	bat->setSpecularTexture(bat->getTextures().diffuse, bat->getSamplers().diffuse);
-	bat->setModelMatrix(glm::translate(glm::scale(bat->getModelMatrix(), glm::vec3(2.0f,2.0f,2.0f)), glm::vec3(0.0f, -3.0f, 0.0f)));
+	bat->setModelMatrix(glm::translate(glm::scale(bat->getModelMatrix(), glm::vec3(1.3f,2.0f,2.0f)), glm::vec3(0.0f, -5.0f, 0.0f)));
 	scene->setBat(bat);
 	// Pomieszczenie
 	Drawable *box = new Drawable();
-	box->loadShaders("shaders/vertex/bat.txt", "shaders/fragment/bat.txt");
+	box->loadShaders("shaders/vertex/default.txt", "shaders/fragment/default.txt");
 	box->loadObj("models/box.obj");
 	box->setDiffuseTexture("textures/t2.tga");
 	box->setAmbientTexture(box->getTextures().diffuse, box->getSamplers().diffuse);
@@ -197,7 +203,7 @@ void initObjects(){
 	for(int i=0; i<3; i++){
 		for(int j=0; j<6; j++){
 			Block *b = new Block();
-			b->loadShaders("shaders/vertex/bat.txt", "shaders/fragment/bat.txt");
+			b->loadShaders("shaders/vertex/default.txt", "shaders/fragment/default.txt");
 			b->loadObj("models/cube.obj");
 			b->setDiffuseTexture("textures/fire.tga");
 			b->setAmbientTexture(b->getTextures().diffuse, b->getSamplers().diffuse);
