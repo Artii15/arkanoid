@@ -8,6 +8,7 @@ Scene::Scene(unsigned int max_hits_count){
 	for(short i=0; i < 4; i++){
 		this->was_ball_wall_collision[i] = false;
 	}
+	this->scene_drawed = false;
 }
 
 Scene::~Scene(){
@@ -58,7 +59,6 @@ Bat* Scene::getBat(){
 }
 Scene& Scene::addBall(Ball* b){
 	this->balls.push_back(b);
-	
 	return *(this);
 }
 
@@ -80,15 +80,19 @@ int Scene::run(const glm::mat4& v, const glm::mat4& p){
 	if(this->box != NULL){
 		this->box->draw(v,p,this->lights);
 	}
-	if(this->balls.size() > 0){
-		if(this->balls[0] != NULL ){
-			this->balls[0]->move(20.0f);
-			this->balls[0]->draw(v,p,this->lights);
-		}
-	}
+	
 	if(this->bat != NULL){
 		this->bat->move();
 		this->bat->draw(v,p,this->lights);
+	}
+	
+	if(this->balls.size() > 0){
+		if(!this->scene_drawed){
+			this->scene_drawed = true;
+			this->balls[0]->resetTimer();
+		}
+		this->balls[0]->move(20.0f);
+		this->balls[0]->draw(v,p,this->lights);
 	}
 	for(unsigned int i=0; i < this->blocks.size(); i++){
 		if(this->blocks[i] != NULL){
@@ -161,9 +165,13 @@ bool Scene::checkBallCollision(){
 	}
 	if(ball_center[1] - wall_coords[2][1] <= radius){
 		if(!this->was_ball_wall_collision[3]){
-			this->balls[0]->bounce(glm::vec3(0,1,0));
+			Ball* tmp = this->balls[0];
+			this->balls[0] = this->balls[this->balls.size()-1];
+			delete tmp;
+			this->balls.pop_back();
 			delete wall_coords;
 			this->was_ball_wall_collision[3] = true;
+			this->balls[0]->resetTimer();
 			return true;
 		}
 	}

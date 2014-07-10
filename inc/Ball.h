@@ -22,6 +22,7 @@ class Ball: public Drawable{
 		Ball& bounce(glm::vec4* rect);
 		Ball& setSummaryDirection(glm::vec3 dir); // Oblicza wektor wypadkowy na podstawie swojego wektora i podanego w parametrze
 		Ball& bounce(glm::vec3 normal);
+		Ball& resetTimer();
 };
 
 #endif

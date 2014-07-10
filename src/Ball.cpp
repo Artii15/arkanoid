@@ -1,7 +1,7 @@
 #include "../inc/Ball.h"
 
 Ball::Ball(){
-	this->direction = glm::normalize(glm::vec3(0, -1, 0));
+	this->direction = glm::vec3(0, -1, 0);
 	this->time = glutGet(GLUT_ELAPSED_TIME);
 	this->center = glm::vec4(0,0,0,1);
 	this->radius = 0;
@@ -101,6 +101,12 @@ Ball& Ball::setSummaryDirection(glm::vec3 dir){
 
 Ball& Ball::bounce(glm::vec3 normal){
 	this->direction = glm::reflect(this->direction, normal);
+	
+	return *(this);
+}
+
+Ball& Ball::resetTimer(){
+	this->time = glutGet(GLUT_ELAPSED_TIME);
 	
 	return *(this);
 }

@@ -60,7 +60,7 @@ void displayFrame() {
 	glm::vec3 observer_position = glm::vec3(cam_x,cam_y,cam_z);
 	glm::vec3 look_at_position = glm::vec3(0.0f,0.0f,0.0f);
 	if(observer_position == look_at_position){
-		observer_position[2] += 0.1f;
+		observer_position[2] += 0.1f; // Zabezpieczenie przed ustawieniem obserwatora w punkcie na który patrzy
 	}
 	glm::mat4 v = glm::lookAt(observer_position,look_at_position,glm::vec3(0.0f,1.0f,0.0f)); 
 	
